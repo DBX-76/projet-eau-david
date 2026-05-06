@@ -1,8 +1,13 @@
 # ============================================================================
-# NOTEBOOK 2 : TRANSFORMATION - COUCHE SILVER
+# NOTEBOOK 2 : TRANSFORMATION DES DONNÉES - COUCHE SILVER
 # ============================================================================
-# Objectif : Nettoyer, valider et standardiser les données brutes (Bronze)
-#            Utilise Great Expectations v0.18+ (nouvelle API Fluent)
+# Description : Ce notebook transforme les données brutes de la couche Bronze
+#               en données nettoyées et validées pour la couche Silver.
+#               Utilise Great Expectations v0.18+ avec l'API Fluent moderne.
+#
+# Objectif : Nettoyer, valider et standardiser les données brutes issues
+#            de l'ingestion, en appliquant des règles métier et des validations
+#            automatisées.
 #
 # Date : Mai 2026
 # Version : 2.0.0
@@ -38,14 +43,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BRONZE_PATH = "./data/bronze/bronze_combined.csv"
-SILVER_PATH = "./data/clean"
-GX_DOCS_PATH = "./gx"          # Dossier racine Great Expectations
+# Chemins des données
+BRONZE_PATH = "./data/bronze/bronze_combined.csv"  # Fichier source combiné depuis la couche Bronze
+SILVER_PATH = "./data/clean"                       # Dossier de destination pour les données Silver
+GX_DOCS_PATH = "./gx"                              # Dossier racine pour les documents Great Expectations
 os.makedirs(SILVER_PATH, exist_ok=True)
 os.makedirs(GX_DOCS_PATH, exist_ok=True)
 
-ENCODING  = 'iso-8859-1'
-SEPARATOR = ';'
+# Paramètres d'encodage et de formatage
+ENCODING = 'iso-8859-1'  # Encodage des fichiers texte (support des caractères français)
+SEPARATOR = ';'          # Séparateur de colonnes pour l'export CSV
 
 # Plages de valeurs acceptables par paramètre (métier)
 # Sources : directive 98/83/CE + arrêté du 11 janvier 2007 (eau potable France)
@@ -221,7 +228,7 @@ def validate_with_great_expectations(df: pd.DataFrame) -> dict:
     Returns:
         dict : {'success': bool, 'statistics': dict, 'results': list, 'skipped': bool}
     """
-        logger.info("\nVALIDATION GREAT EXPECTATIONS (v0.18+)")
+    logger.info("\nVALIDATION GREAT EXPECTATIONS (v0.18+)")
 
     if not GX_AVAILABLE:
         logger.warning("  Great Expectations non installé — validation ignorée")
@@ -632,38 +639,51 @@ def save_silver_data(df: pd.DataFrame, filename: str = "silver_clean.csv") -> bo
 # ============================================================================
 
 def main():
+    """
+    Fonction principale qui orchestre la transformation des données de la couche Bronze vers Silver.
+
+    Cette fonction exécute séquentiellement les étapes suivantes :
+    - Chargement des données brutes
+    - Reconstruction par jointures
+    - Nettoyage et standardisation
+    - Déduplication
+    - Enrichissement avec métadonnées
+    - Validation avec Great Expectations
+    - Validation personnalisée
+    - Sauvegarde des données nettoyées
+    """
     logger.info("\n" + "=" * 80)
     logger.info("🔄 PIPELINE SILVER — TRANSFORMATION + VALIDATION GX")
     logger.info(f"Timestamp : {datetime.now().isoformat()}")
     logger.info("=" * 80)
 
-    # 1. Charger Bronze
+    # Étape 1 : Chargement des données brutes depuis la couche Bronze
     df = load_bronze_data(BRONZE_PATH)
     if df is None:
-        logger.error("Chargement Bronze impossible — pipeline arrêté")
+        logger.error("Chargement des données Bronze impossible — arrêt du pipeline")
         return
-    logger.info(f"\nBronze : {len(df)} lignes × {len(df.columns)} colonnes")
+    logger.info(f"\nDonnées Bronze chargées : {len(df)} lignes × {len(df.columns)} colonnes")
 
-    # 1.5. Reconstruire via jointures
+    # Étape 1.5 : Reconstruction des données par jointures intelligentes
     df = reconstruct_data(df)
-    logger.info(f"Après reconstruction : {len(df)} lignes × {len(df.columns)} colonnes")
+    logger.info(f"Données après reconstruction : {len(df)} lignes × {len(df.columns)} colonnes")
 
-    # 2. Nettoyer
+    # Étape 2 : Nettoyage et standardisation des données
     df = clean_data(df)
 
-    # 3. Dédupliquer
+    # Étape 3 : Suppression des doublons
     df = deduplicate_data(df)
 
-    # 4. Enrichir (avant validation, pour que quality_flag soit validé)
+    # Étape 4 : Enrichissement avec métadonnées et indicateurs qualité
     df = enrich_data(df)
 
-    # 5. Validation Great Expectations (API v0.18+)
+    # Étape 5 : Validation avec Great Expectations (API v0.18+)
     gx_result = validate_with_great_expectations(df)
 
-    # 5b. Validation personnalisée (complémentaire / fallback)
+    # Étape 5b : Validation personnalisée complémentaire
     custom_issues = validate_custom(df)
 
-    # 6. Sauvegarder
+    # Étape 6 : Sauvegarde des données nettoyées dans la couche Silver
     success = save_silver_data(df)
 
     # ── Résumé final ──────────────────────────────────────────────────────────

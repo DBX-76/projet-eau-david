@@ -1,8 +1,12 @@
 # ============================================================================
-# NOTEBOOK 1 : INGESTION - COUCHE BRONZE
+# NOTEBOOK 1 : INGESTION DE DONNÉES BRUTES - COUCHE BRONZE
 # ============================================================================
-# Objectif : Télécharger les données brutes depuis data.gouv.fr et les 
-#            stocker dans la couche Bronze (stockage brut)
+# Description : Ce notebook gère l'ingestion des données brutes depuis la plateforme
+#               data.gouv.fr et leur stockage dans la couche Bronze du pipeline de données.
+#
+# Objectif : Télécharger les fichiers de données, effectuer une validation basique,
+#            fusionner les données provenant de différentes sources, et les sauvegarder
+#            dans un format brut pour les étapes de transformation ultérieures.
 # ============================================================================
 
 import requests
@@ -35,10 +39,10 @@ BRONZE_PATH = "./data/bronze"
 os.makedirs(BRONZE_PATH, exist_ok=True)
 
 # Paramètres de téléchargement
-TIMEOUT = 300  # 5 min 
-ENCODING = 'iso-8859-1'  # 
-SEPARATOR_CSV = ','  
-SEPARATOR_FR = ';'  
+TIMEOUT = 300  # Délai d'attente maximal pour les requêtes HTTP (en secondes, soit 5 minutes)
+ENCODING = 'iso-8859-1'  # Encodage des fichiers texte (ISO-8859-1 pour supporter les caractères accentués français)
+SEPARATOR_CSV = ','  # Séparateur de colonnes standard dans les fichiers CSV
+SEPARATOR_FR = ';'  # Séparateur français pour l'export des données (point-virgule au lieu de virgule)
 
 # ============================================================================
 # FONCTION PRINCIPALE : INGESTION
@@ -436,59 +440,65 @@ def validate_raw_data(df: pd.DataFrame) -> dict:
 
 def main():
     """
-    Fonction principale : coordonne l'ensemble du pipeline d'ingestion.
+    Fonction principale qui orchestre l'ensemble du processus d'ingestion des données brutes.
+
+    Cette fonction coordonne les étapes suivantes :
+    - Téléchargement des données depuis les sources externes
+    - Validation basique des données téléchargées
+    - Fusion des données provenant de différentes sources
+    - Sauvegarde des données dans la couche Bronze
     """
     logger.info("\n" + "=" * 80)
     logger.info("DÉMARRAGE DU PIPELINE D'INGESTION (BRONZE)")
     logger.info(f"Timestamp : {datetime.now().isoformat()}")
     logger.info("=" * 80 + "\n")
     
-    all_data = []  # Accumule les DataFrames
-    
-    # Télécharger et traiter chaque source
+    all_data = []  # Liste pour accumuler les DataFrames de chaque source traitée avec succès
+
+    # Itération sur chaque source de données à traiter
     for source_name, url in DATA_SOURCES.items():
         logger.info(f"\nTraitement de la source : {source_name}")
         logger.info(f"URL : {url}")
-        
-        # 1. Télécharger la source
+
+        # Étape 1 : Téléchargement des données depuis la source externe
         df = download_data(source_name, url)
-        
+
         if df is None:
-            logger.warning(f"Source {source_name} ignorée (erreur lors du téléchargement)")
+            logger.warning(f"Source {source_name} ignorée en raison d'une erreur lors du téléchargement")
             continue
-        
-        # 2. Valider les données brutes
+
+        # Étape 2 : Validation basique des données téléchargées
         validation = validate_raw_data(df)
-        
+
         if not validation["not_empty"]:
-            logger.warning(f"Source {source_name} ignorée (données vides)")
+            logger.warning(f"Source {source_name} ignorée car les données sont vides")
             continue
-        
-        # 3. Aperçu des données
+
+        # Étape 3 : Affichage d'un aperçu des données pour vérification
         display_data_preview(df)
-        
-        # 4. Ajouter la source d'origine (pour traçabilité)
+
+        # Étape 4 : Ajout de métadonnées pour la traçabilité des données
         df['source_donnee'] = source_name
         df['ingestion_date'] = datetime.now().isoformat()
-        
-        # 5. Sauvegarder individuellement
+
+        # Étape 5 : Sauvegarde individuelle des données de cette source
         success = save_to_csv(df, f"bronze_{source_name}")
-        
+
         if success:
             all_data.append(df)
         else:
-            logger.warning(f"Erreur lors de la sauvegarde de {source_name}")
-    
-    # 6. Fusionner toutes les sources
+            logger.warning(f"Erreur lors de la sauvegarde des données de {source_name}")
+
+    # Étape 6 : Fusion de toutes les sources traitées avec succès
     if all_data:
-        logger.info(f"\n🔗 Fusion de {len(all_data)} source(s)...")
+        logger.info(f"\nFusion de {len(all_data)} source(s) de données...")
         df_combined = pd.concat(all_data, ignore_index=True)
-        logger.info(f"INFO :  Données fusionnées : {len(df_combined)} lignes")
-        
-        # 7. Sauvegarder le fichier combiné
+        logger.info(f"Données fusionnées : {len(df_combined)} lignes au total")
+
+        # Étape 7 : Sauvegarde du fichier combiné regroupant toutes les sources
         save_to_csv(df_combined, "bronze_combined")
-        
-        # 8. Résumé final
+
+        # Étape 8 : Génération du résumé final de l'ingestion
         logger.info("\n" + "=" * 80)
         logger.info("RÉSUMÉ DE L'INGESTION")
         logger.info("=" * 80)

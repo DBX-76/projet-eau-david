@@ -1,12 +1,15 @@
 # ============================================================================
-# NOTEBOOK 3 : AGRÉGATION - COUCHE GOLD
+# NOTEBOOK 3 : AGRÉGATION DES DONNÉES - COUCHE GOLD
 # ============================================================================
-# Objectif : Créer des KPIs métier et agrégations pour analyse/visualisation
-#            À partir des données Silver nettoyées et validées
-# 
-# Auteur : [À compléter]
-# Date : Mai 2026
-# Version : 1.0.0-alpha
+# Description : Ce notebook réalise l'agrégation des données nettoyées de la couche Silver
+#               pour créer des indicateurs clés (KPIs) et des analyses métier destinées
+#               à l'analyse et à la visualisation.
+#
+# Objectif : À partir des données Silver validées, générer des agrégations globales,
+#            des analyses par département, des classements de communes, des séries
+#            temporelles et des analyses de paramètres critiques pour faciliter
+#            la prise de décision.
+#
 # ============================================================================
 
 import pandas as pd
@@ -25,15 +28,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-SILVER_PATH = "./data/clean/silver_clean.csv"
-GOLD_PATH = "./data/gold"
+# Chemins des données
+SILVER_PATH = "./data/clean/silver_clean.csv"  # Fichier source nettoyé depuis la couche Silver
+GOLD_PATH = "./data/gold"                      # Dossier de destination pour les agrégations Gold
 os.makedirs(GOLD_PATH, exist_ok=True)
 
-# Paramètres de nettoyage
-ENCODING = 'iso-8859-1'
-SEPARATOR = ';'
+# Paramètres de formatage
+ENCODING = 'iso-8859-1'  # Encodage des fichiers texte (support des caractères français)
+SEPARATOR = ';'          # Séparateur de colonnes pour l'export CSV
 
-# Seuils de conformité par paramètre (source : OMS / Réglementation EU)
+# Seuils de conformité par paramètre pour l'évaluation qualité eau
+# Sources : OMS (Organisation Mondiale de la Santé) et Réglementation Européenne
+# Ces seuils définissent les limites acceptables pour la potabilité de l'eau
 CONFORMITY_THRESHOLDS = {
     "pH": {"min": 6.5, "max": 8.5, "type": "range"},
     "Nitrates": {"threshold": 50, "unit": "mg/L", "type": "max"},
@@ -52,7 +58,7 @@ CONFORMITY_THRESHOLDS = {
 def load_silver_data(filepath: str) -> pd.DataFrame:
     """Charge les données Silver nettoyées."""
     try:
-        logger.info(f"📂 Chargement données Silver : {filepath}")
+        logger.info(f"Chargement données Silver : {filepath}")
         df = pd.read_csv(filepath, sep=SEPARATOR, encoding=ENCODING)
         logger.info(f"{len(df)} lignes chargées")
         return df
@@ -69,7 +75,20 @@ def load_silver_data(filepath: str) -> pd.DataFrame:
 # ============================================================================
 
 def calculate_global_kpis(df: pd.DataFrame) -> pd.DataFrame:
-    """Calcule les indicateurs clés globaux."""
+    """
+    Calcule les indicateurs clés de performance (KPIs) globaux à partir des données Silver.
+
+    Cette fonction génère des métriques globales incluant :
+    - Statistiques de couverture (temporelle, géographique, paramètres)
+    - Taux de conformité globale aux normes de qualité
+    - Distribution des indicateurs de qualité (OK, WARNING, ALERT, UNKNOWN)
+
+    Args:
+        df (pd.DataFrame) : DataFrame Silver nettoyé
+
+    Returns:
+        pd.DataFrame : DataFrame contenant une ligne avec tous les KPIs calculés
+    """
     logger.info("\nCALCUL DES KPIs GLOBAUX")
     
     kpis = {}
@@ -142,8 +161,22 @@ def calculate_global_kpis(df: pd.DataFrame) -> pd.DataFrame:
 # ============================================================================
 
 def aggregate_by_department(df: pd.DataFrame) -> pd.DataFrame:
-    """Agrège par département avec score pollution."""
-    logger.info("\n🗺️ AGRÉGATION PAR DÉPARTEMENT")
+    """
+    Réalise l'agrégation des données par département avec calcul d'un score de pollution.
+
+    Pour chaque département, calcule :
+    - Nombre de prélèvements et communes couvertes
+    - Statistiques des résultats (moyenne, écart-type, min, max)
+    - Nombre d'alertes qualité
+    - Score de pollution composite basé sur la moyenne et les alertes
+
+    Args:
+        df (pd.DataFrame) : DataFrame Silver nettoyé
+
+    Returns:
+        pd.DataFrame : DataFrame agrégé par département, trié par score de pollution décroissant
+    """
+    logger.info("\nAGRÉGATION PAR DÉPARTEMENT")
     
     if 'code_departement' not in df.columns:
         logger.warning("  Colonne 'code_departement' absente")
@@ -181,7 +214,21 @@ def aggregate_by_department(df: pd.DataFrame) -> pd.DataFrame:
 # ============================================================================
 
 def get_best_worst_communes(df: pd.DataFrame, n: int = 10) -> tuple:
-    """Identifie Top N et Bottom N communes."""
+    """
+    Identifie les N meilleures et N pires communes en termes de qualité de l'eau.
+
+    La classification est basée sur la moyenne des résultats de pollution,
+    en ne considérant que les communes avec au moins 5 prélèvements
+    pour assurer la représentativité des données.
+
+    Args:
+        df (pd.DataFrame) : DataFrame Silver nettoyé
+        n (int) : Nombre de communes à retourner pour chaque catégorie (défaut: 10)
+
+    Returns:
+        tuple : (pd.DataFrame meilleures communes, pd.DataFrame pires communes)
+                Chaque DataFrame contient nom_commune, samplings, avg_pollution
+    """
     logger.info(f"\nTOP {n} / BOTTOM {n} COMMUNES")
     
     if 'nom_commune' not in df.columns or 'resultat' not in df.columns:
@@ -208,8 +255,22 @@ def get_best_worst_communes(df: pd.DataFrame, n: int = 10) -> tuple:
 # ============================================================================
 
 def analyze_timeseries(df: pd.DataFrame, parameter: str = "Nitrates") -> pd.DataFrame:
-    """Analyse la série temporelle d'un paramètre."""
-    logger.info(f"\n📈 SÉRIE TEMPORELLE - {parameter}")
+    """
+    Analyse l'évolution temporelle d'un paramètre spécifique par mois.
+
+    Agrège les données par mois pour fournir des statistiques
+    (moyenne, écart-type, min, max, nombre d'échantillons)
+    permettant d'observer les tendances saisonnières et l'évolution.
+
+    Args:
+        df (pd.DataFrame) : DataFrame Silver nettoyé
+        parameter (str) : Nom du paramètre à analyser (défaut: "Nitrates")
+
+    Returns:
+        pd.DataFrame : DataFrame avec colonnes year_month, avg_value, std_value,
+                      min_value, max_value, sample_count
+    """
+    logger.info(f"\nSÉRIE TEMPORELLE - {parameter}")
     
     if 'nom_parametre' not in df.columns or 'date_prelevement' not in df.columns:
         logger.warning("  Colonnes requises absentes")
@@ -244,7 +305,20 @@ def analyze_timeseries(df: pd.DataFrame, parameter: str = "Nitrates") -> pd.Data
 # ============================================================================
 
 def analyze_critical_parameters(df: pd.DataFrame) -> pd.DataFrame:
-    """Analyse les paramètres critiques."""
+    """
+    Analyse approfondie des paramètres critiques pour la qualité de l'eau.
+
+    Pour chaque paramètre critique (Nitrates, E.coli, pH, etc.),
+    calcule les statistiques descriptives et évalue le taux de dépassement
+    des seuils réglementaires.
+
+    Args:
+        df (pd.DataFrame) : DataFrame Silver nettoyé
+
+    Returns:
+        pd.DataFrame : DataFrame avec statistiques par paramètre critique,
+                      incluant seuils et taux de dépassement
+    """
     logger.info("\nANALYSE PARAMÈTRES CRITIQUES")
     
     critical_params = ['Nitrates', 'E.coli', 'pH', 'Coliformes', 'Pesticides']
@@ -283,10 +357,30 @@ def analyze_critical_parameters(df: pd.DataFrame) -> pd.DataFrame:
 # FONCTION 7 : SAUVEGARDER LES FICHIERS GOLD
 # ============================================================================
 
-def save_gold_files(kpis: pd.DataFrame, dept_agg: pd.DataFrame, 
+def save_gold_files(kpis: pd.DataFrame, dept_agg: pd.DataFrame,
                    best_communes: pd.DataFrame, worst_communes: pd.DataFrame,
                    ts_nitrates: pd.DataFrame, critical_params: pd.DataFrame) -> bool:
-    """Sauvegarde tous les fichiers Gold."""
+    """
+    Sauvegarde tous les fichiers agrégés de la couche Gold au format CSV.
+
+    Les fichiers sauvegardés incluent :
+    - KPIs globaux
+    - Agrégations par département
+    - Classements des communes (top/bottom)
+    - Série temporelle des nitrates
+    - Analyse des paramètres critiques
+
+    Args:
+        kpis (pd.DataFrame) : KPIs globaux
+        dept_agg (pd.DataFrame) : Agrégations par département
+        best_communes (pd.DataFrame) : Meilleures communes
+        worst_communes (pd.DataFrame) : Pires communes
+        ts_nitrates (pd.DataFrame) : Série temporelle nitrates
+        critical_params (pd.DataFrame) : Analyse paramètres critiques
+
+    Returns:
+        bool : True si toutes les sauvegardes ont réussi, False sinon
+    """
     try:
         files_saved = []
         
@@ -320,7 +414,7 @@ def save_gold_files(kpis: pd.DataFrame, dept_agg: pd.DataFrame,
             critical_params.to_csv(filepath, sep=SEPARATOR, encoding=ENCODING, index=False)
             files_saved.append("gold_critical_parameters.csv")
         
-        logger.info(f"💾 {len(files_saved)} fichiers Gold sauvegardés")
+        logger.info(f" {len(files_saved)} fichiers Gold sauvegardés")
         return True
     except Exception as e:
         logger.error(f"Erreur sauvegarde Gold : {e}")
@@ -332,36 +426,47 @@ def save_gold_files(kpis: pd.DataFrame, dept_agg: pd.DataFrame,
 # ============================================================================
 
 def main():
-    """Fonction principale : orchestre le pipeline Gold."""
+    """
+    Fonction principale qui orchestre l'agrégation des données vers la couche Gold.
+
+    Cette fonction exécute séquentiellement les étapes suivantes :
+    - Chargement des données Silver nettoyées
+    - Calcul des indicateurs clés globaux (KPIs)
+    - Agrégation des données par département
+    - Identification des meilleures et pires communes
+    - Analyse des séries temporelles pour les nitrates
+    - Analyse des paramètres critiques
+    - Sauvegarde de tous les fichiers agrégés dans la couche Gold
+    """
     logger.info("\n" + "=" * 80)
-    logger.info("🌟 DÉMARRAGE DU PIPELINE D'AGRÉGATION (GOLD)")
+    logger.info("DÉMARRAGE DU PIPELINE D'AGRÉGATION (GOLD)")
     logger.info(f"Timestamp : {datetime.now().isoformat()}")
     logger.info("=" * 80)
     
-    # 1. Charger les données Silver
+    # Étape 1 : Chargement des données nettoyées depuis la couche Silver
     df = load_silver_data(SILVER_PATH)
     if df is None:
-        logger.error("Impossible de charger Silver. Pipeline arrêté.")
+        logger.error("Chargement des données Silver impossible — arrêt du pipeline")
         return
-    
+
     logger.info(f"\nDonnées Silver chargées : {len(df)} lignes × {len(df.columns)} colonnes")
-    
-    # 2. Calculer KPIs globaux
+
+    # Étape 2 : Calcul des indicateurs clés globaux (KPIs)
     kpis = calculate_global_kpis(df)
-    
-    # 3. Agrégations par département
+
+    # Étape 3 : Agrégation des données par département avec scores de pollution
     dept_agg = aggregate_by_department(df)
-    
-    # 4. Top 10 / Bottom 10 communes
+
+    # Étape 4 : Identification des 10 meilleures et 10 pires communes
     best_communes, worst_communes = get_best_worst_communes(df, n=10)
-    
-    # 5. Série temporelle Nitrates
+
+    # Étape 5 : Analyse des séries temporelles pour les nitrates
     ts_nitrates = analyze_timeseries(df, parameter="Nitrates")
-    
-    # 6. Analyse paramètres critiques
+
+    # Étape 6 : Analyse approfondie des paramètres critiques
     critical_params = analyze_critical_parameters(df)
-    
-    # 7. Sauvegarder tous les fichiers Gold
+
+    # Étape 7 : Sauvegarde de tous les fichiers agrégés dans la couche Gold
     success = save_gold_files(kpis, dept_agg, best_communes, worst_communes, ts_nitrates, critical_params)
     
     if success:
@@ -376,13 +481,13 @@ def main():
             logger.info(f"Communes couvertes : {kpis.iloc[0].get('communes_covered', 'N/A')}")
         
         if not dept_agg.empty:
-            logger.info(f"\n📍 Département le plus pollué : {dept_agg.iloc[0]['code_departement']} (score: {dept_agg.iloc[0]['pollution_score']})")
+            logger.info(f"\nDépartement le plus pollué : {dept_agg.iloc[0]['code_departement']} (score: {dept_agg.iloc[0]['pollution_score']})")
         
         if not best_communes.empty:
-            logger.info(f"\n🥇 Meilleure commune : {best_communes.iloc[0]['nom_commune']} (pollution moyenne: {best_communes.iloc[0]['avg_pollution']})")
+            logger.info(f"\nMeilleure commune : {best_communes.iloc[0]['nom_commune']} (pollution moyenne: {best_communes.iloc[0]['avg_pollution']})")
         
         if not worst_communes.empty:
-            logger.info(f"🥉 Pire commune : {worst_communes.iloc[0]['nom_commune']} (pollution moyenne: {worst_communes.iloc[0]['avg_pollution']})")
+            logger.info(f"Pire commune : {worst_communes.iloc[0]['nom_commune']} (pollution moyenne: {worst_communes.iloc[0]['avg_pollution']})")
         
         if not critical_params.empty:
             logger.info(f"\nParamètres critiques analysés : {len(critical_params)}")
