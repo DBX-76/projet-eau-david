@@ -25,21 +25,21 @@ TIMEOUT = 300
 def analyze_zip_content():
     """Analyse le contenu du fichier ZIP."""
     logger.info("\n" + "=" * 80)
-    logger.info("🔍 ANALYSE DU CONTENU DU ZIP")
+    logger.info("ANALYSE DU CONTENU DU ZIP")
     logger.info("=" * 80)
     
     try:
-        logger.info("\n📥 Téléchargement du ZIP...")
+        logger.info("\nTéléchargement du ZIP...")
         response = requests.get(ZIP_URL, timeout=TIMEOUT, allow_redirects=True)
         response.raise_for_status()
         
         file_size_mb = len(response.content) / 1024 / 1024
-        logger.info(f"✅ Téléchargé : {file_size_mb:.2f} MB")
+        logger.info(f"Téléchargé : {file_size_mb:.2f} MB")
         
         # Analyser le ZIP
         zip_buffer = io.BytesIO(response.content)
         
-        logger.info("\n📦 Fichiers dans le ZIP :")
+        logger.info("\nFichiers dans le ZIP :")
         with zipfile.ZipFile(zip_buffer, 'r') as zip_ref:
             file_list = zip_ref.namelist()
             
@@ -53,7 +53,7 @@ def analyze_zip_content():
             
             # Afficher les fichiers par extension
             for ext in sorted(extensions.keys()):
-                logger.info(f"\n  📄 Fichiers .{ext} ({len(extensions[ext])} fichier(s)) :")
+                logger.info(f"\n  Fichiers .{ext} ({len(extensions[ext])} fichier(s)) :")
                 for fname in extensions[ext]:
                     try:
                         file_info = zip_ref.getinfo(fname)
@@ -117,14 +117,14 @@ def analyze_zip_content():
                         logger.info(f"   {lines[1][:100]}...")
             
             except Exception as e:
-                logger.error(f"   ❌ Erreur analyse : {e}")
+                logger.error(f"   Erreur analyse : {e}")
         
         logger.info("\n" + "=" * 80)
-        logger.info("✅ ANALYSE TERMINÉE")
+        logger.info("ANALYSE TERMINÉE")
         logger.info("=" * 80 + "\n")
         
     except Exception as e:
-        logger.error(f"\n❌ Erreur : {e}")
+        logger.error(f"\nErreur : {e}")
         import traceback
         traceback.print_exc()
 

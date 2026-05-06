@@ -27,4 +27,4 @@ if 'date_prelevement' in df.columns:
     print(f"\ndate_prelevement non-nulls in sample: {df['date_prelevement'].notna().sum()}/{len(df)}")
     print(f"Sample dates: {df['date_prelevement'].dropna().unique()[:3]}")
 
-print("\n✅ Quick check complete!")
+print("\nQuick check complete!")

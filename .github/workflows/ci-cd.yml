@@ -29,7 +29,7 @@ jobs:
 
     - name: Debug - List Data Files (Sécurité)
       run: |
-        echo "🔍 Vérification des fichiers de données présents :"
+        echo "Vérification des fichiers de données présents :"
         find ./data -name "*.csv" -type f
         # Cela t'aidera à voir en direct si le sample a bien été poussé
 

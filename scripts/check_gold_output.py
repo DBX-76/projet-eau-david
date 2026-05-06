@@ -20,18 +20,18 @@ files = [
 ]
 
 logger.info("=" * 80)
-logger.info("📊 VALIDATION DES FICHIERS GOLD")
+logger.info("VALIDATION DES FICHIERS GOLD")
 logger.info("=" * 80)
 
 for filename in files:
     filepath = os.path.join(GOLD_PATH, filename)
     
     if not os.path.exists(filepath):
-        logger.warning(f"❌ {filename} — MANQUANT")
+        logger.warning(f"{filename} — MANQUANT")
         continue
     
     size_mb = os.path.getsize(filepath) / (1024 * 1024)
-    logger.info(f"\n📄 {filename} ({size_mb:.2f} MB)")
+    logger.info(f"\n{filename} ({size_mb:.2f} MB)")
     
     try:
         df = pd.read_csv(filepath, sep=";")
@@ -40,13 +40,13 @@ for filename in files:
         
         # Aperçu des données
         if df.shape[0] > 0:
-            logger.info(f"\n   📋 Aperçu :")
+            logger.info(f"\n   Aperçu :")
             for idx, row in df.head(3).iterrows():
                 logger.info(f"      {row.to_dict()}")
         
     except Exception as e:
-        logger.error(f"   ❌ Erreur lecture : {e}")
+        logger.error(f"   Erreur lecture : {e}")
 
 logger.info("\n" + "=" * 80)
-logger.info("✅ VALIDATION TERMINÉE")
+logger.info("VALIDATION TERMINÉE")
 logger.info("=" * 80)

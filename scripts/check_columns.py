@@ -28,16 +28,16 @@ SEPARATOR = ','
 def analyze_columns():
     """Analyse les colonnes réelles des données."""
     logger.info("\n" + "=" * 80)
-    logger.info("🔍 ANALYSE DES COLONNES RÉELLES")
+        logger.info("ANALYSE DES COLONNES RÉELLES")
     logger.info("=" * 80)
     
     try:
-        logger.info("\n📥 Téléchargement du ZIP...")
+        logger.info("\nTéléchargement du ZIP...")
         response = requests.get(ZIP_URL, timeout=TIMEOUT, allow_redirects=True)
         response.raise_for_status()
         
         file_size_mb = len(response.content) / 1024 / 1024
-        logger.info(f"✅ Téléchargé : {file_size_mb:.2f} MB")
+        logger.info(f"Téléchargé : {file_size_mb:.2f} MB")
         
         # Analyser le ZIP
         zip_buffer = io.BytesIO(response.content)
@@ -47,26 +47,26 @@ def analyze_columns():
             txt_files = [f for f in file_list if f.lower().endswith('.txt')]
             
             if not txt_files:
-                logger.error("❌ Aucun fichier .txt trouvé")
+                logger.error("Aucun fichier .txt trouvé")
                 return
             
             # Analyser le premier fichier
             first_file = txt_files[0]
-            logger.info(f"\n📄 Analyse du fichier : {first_file}")
+            logger.info(f"\nAnalyse du fichier : {first_file}")
             
             content = zip_ref.read(first_file)
             text = content.decode(ENCODING)
             lines = text.split('\n')
             
             if not lines:
-                logger.error("❌ Fichier vide")
+                logger.error("Fichier vide")
                 return
             
             # Première ligne = en-têtes
             header_line = lines[0].strip()
             columns = header_line.split(SEPARATOR)
             
-            logger.info(f"\n📊 COLONNES DÉTECTÉES ({len(columns)} colonnes) :")
+            logger.info(f"\nCOLONNES DÉTECTÉES ({len(columns)} colonnes) :")
             logger.info("=" * 80)
             
             for i, col in enumerate(columns, 1):
@@ -75,7 +75,7 @@ def analyze_columns():
             logger.info("\n" + "=" * 80)
             
             # Analyser quelques lignes de données
-            logger.info("📋 ÉCHANTILLON DE DONNÉES :")
+            logger.info("ÉCHANTILLON DE DONNÉES :")
             logger.info("=" * 80)
             
             for i in range(1, min(6, len(lines))):
@@ -120,9 +120,9 @@ def analyze_columns():
                         break
                 
                 if found:
-                    logger.info(f"✅ {standard_name:<20} ← '{found}'")
+                    logger.info(f"{standard_name:<20} ← '{found}'")
                 else:
-                    logger.info(f"❌ {standard_name:<20} ← ??? (pas trouvé)")
+                    logger.info(f"{standard_name:<20} ← ??? (pas trouvé)")
             
             logger.info("\n" + "=" * 80)
             logger.info("💡 PROCHAINES ÉTAPES :")
@@ -132,7 +132,7 @@ def analyze_columns():
             logger.info("=" * 80 + "\n")
             
     except Exception as e:
-        logger.error(f"\n❌ Erreur : {e}")
+        logger.error(f"\nErreur : {e}")
         import traceback
         traceback.print_exc()
 

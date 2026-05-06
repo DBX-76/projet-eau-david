@@ -61,7 +61,7 @@ def extract_csv_from_zip(zip_bytes: bytes, source_name: str) -> pd.DataFrame:
 
         # Ouvrir le fichier ZIP
         with zipfile.ZipFile(zip_buffer, 'r') as zip_ref:
-            logger.info(f"📦 Fichiers trouvés dans le ZIP :")
+            logger.info(f"Fichiers trouvés dans le ZIP :")
             file_list = zip_ref.namelist()
             for fname in file_list:
                 logger.info(f"    - {fname}")
@@ -84,7 +84,7 @@ def extract_csv_from_zip(zip_bytes: bytes, source_name: str) -> pd.DataFrame:
             all_dfs = []
 
             for target_file in files_to_process:
-                logger.info(f"\n📄 Traitement du fichier : {target_file}")
+                logger.info(f"\nTraitement du fichier : {target_file}")
 
                 # Déterminer le type de fichier
                 if target_file.lower().endswith('.csv'):

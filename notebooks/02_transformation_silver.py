@@ -25,7 +25,7 @@ except (ImportError, AttributeError, ModuleNotFoundError) as _gx_err:
     gx  = None
     gxe = None
     logging.getLogger(__name__).warning(
-        f"⚠️ Great Expectations non disponible : {_gx_err}"
+        f"Great Expectations non disponible : {_gx_err}"
     )
 
 # ============================================================================
@@ -88,10 +88,10 @@ def _get_gx_context():
     try:
         import great_expectations as gx
         context = gx.get_context()          # EphemeralDataContext
-        logger.info(f"  ✅ Great Expectations {gx.__version__} — contexte éphémère initialisé")
+        logger.info(f"  Great Expectations {gx.__version__} — contexte éphémère initialisé")
         return context
     except Exception as e:
-        logger.warning(f"  ⚠️ Impossible d'initialiser GX : {e}")
+        logger.warning(f"  Impossible d'initialiser GX : {e}")
         return None
 
 
@@ -198,7 +198,7 @@ def _add_expectations(suite, df_columns: list) -> None:
             )
         )
 
-    logger.info(f"  ✅ {len(suite.expectations)} attentes définies dans la suite")
+    logger.info(f"  {len(suite.expectations)} attentes définies dans la suite")
 
 
 def validate_with_great_expectations(df: pd.DataFrame) -> dict:
@@ -221,16 +221,16 @@ def validate_with_great_expectations(df: pd.DataFrame) -> dict:
     Returns:
         dict : {'success': bool, 'statistics': dict, 'results': list, 'skipped': bool}
     """
-    logger.info("\n🔍 VALIDATION GREAT EXPECTATIONS (v0.18+)")
+        logger.info("\nVALIDATION GREAT EXPECTATIONS (v0.18+)")
 
     if not GX_AVAILABLE:
-        logger.warning("  ⚠️ Great Expectations non installé — validation ignorée")
+        logger.warning("  Great Expectations non installé — validation ignorée")
         return {'success': True, 'skipped': True}
 
     # ── Initialiser le contexte ──────────────────────────────────────────────
     context = _get_gx_context()
     if context is None:
-        logger.warning("  ⚠️ Contexte GX non disponible — validation ignorée")
+        logger.warning("  Contexte GX non disponible — validation ignorée")
         return {'success': True, 'skipped': True}
 
     try:
@@ -291,7 +291,7 @@ def validate_with_great_expectations(df: pd.DataFrame) -> dict:
         successful = statistics.get('successful_expectations', 0)
         failed     = statistics.get('unsuccessful_expectations', 0)
 
-        logger.info(f"\n  {'✅' if success else '❌'} Résultat global : {'SUCCÈS' if success else 'ÉCHEC'}")
+        logger.info(f"\n  {'SUCCES' if success else 'ECHEC'} Résultat global : {'SUCCÈS' if success else 'ÉCHEC'}")
         logger.info(f"  Attentes évaluées  : {evaluated}")
         logger.info(f"  Attentes réussies  : {successful}")
         logger.info(f"  Attentes échouées  : {failed}")
@@ -304,7 +304,7 @@ def validate_with_great_expectations(df: pd.DataFrame) -> dict:
                 exp     = er.expectation_config.type
                 partial = er.result.get('partial_unexpected_list', [])
                 logger.warning(
-                    f"  ❌ [{col}] {exp} | "
+                    f"  [{col}] {exp} | "
                     f"Exemples invalides : {partial[:5]}"
                 )
                 failed_results.append({
@@ -321,7 +321,7 @@ def validate_with_great_expectations(df: pd.DataFrame) -> dict:
         }
 
     except Exception as e:
-        logger.error(f"  ❌ Erreur lors de la validation GX : {e}")
+        logger.error(f"  Erreur lors de la validation GX : {e}")
         import traceback
         traceback.print_exc()
         # On ne bloque pas le pipeline : on retourne un résultat dégradé
@@ -336,13 +336,13 @@ def load_bronze_data(filepath: str) -> pd.DataFrame:
     try:
         logger.info(f"📂 Chargement des données : {filepath}")
         df = pd.read_csv(filepath, sep=SEPARATOR, encoding=ENCODING, low_memory=False)
-        logger.info(f"✅ {len(df)} lignes chargées")
+        logger.info(f"{len(df)} lignes chargées")
         return df
     except FileNotFoundError:
-        logger.error(f"❌ Fichier non trouvé : {filepath}")
+        logger.error(f"Fichier non trouvé : {filepath}")
         return None
     except Exception as e:
-        logger.error(f"❌ Erreur lors du chargement : {e}")
+        logger.error(f"Erreur lors du chargement : {e}")
         return None
 
 
@@ -362,7 +362,7 @@ def reconstruct_data(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("\n🔗 RECONSTRUCTION DES DONNÉES (JOINTURES)")
 
     if 'type_fichier' not in df.columns:
-        logger.warning("  ⚠️ Colonne 'type_fichier' absente — jointure impossible")
+        logger.warning("  Colonne 'type_fichier' absente — jointure impossible")
         return df
 
     df_result = df[df['type_fichier'] == 'RESULTATS'].copy()
@@ -374,7 +374,7 @@ def reconstruct_data(df: pd.DataFrame) -> pd.DataFrame:
     logger.info(f"  - COMMUNES       : {len(df_com)} lignes")
 
     if len(df_result) == 0:
-        logger.warning("  ⚠️ Aucune ligne RESULTATS — retour du DataFrame original")
+        logger.warning("  Aucune ligne RESULTATS — retour du DataFrame original")
         return df
 
     # ── Jointure RESULT ← PLV ────────────────────────────────────────────────
@@ -395,9 +395,9 @@ def reconstruct_data(df: pd.DataFrame) -> pd.DataFrame:
                 df_merged[col] = df_merged[f'{col}_plv']
                 df_merged.drop(columns=[f'{col}_plv'], inplace=True)
 
-        logger.info(f"  ✅ Après jointure PLV : {len(df_merged)} lignes")
+        logger.info(f"  Après jointure PLV : {len(df_merged)} lignes")
     else:
-        logger.warning("  ⚠️ Jointure PLV ignorée (données ou clé manquantes)")
+        logger.warning("  Jointure PLV ignorée (données ou clé manquantes)")
         df_merged = df_result.copy()
 
     # ── Jointure ← COM ───────────────────────────────────────────────────────
@@ -405,14 +405,14 @@ def reconstruct_data(df: pd.DataFrame) -> pd.DataFrame:
         cols_com = [c for c in ['code_reseau', 'nom_reseau', 'debut_alimentation'] if c in df_com.columns]
         df_com_dedup = df_com[cols_com].drop_duplicates(subset=['code_reseau'], keep='first')
         df_merged = pd.merge(df_merged, df_com_dedup, on='code_reseau', how='left', suffixes=('', '_com'))
-        logger.info(f"  ✅ Après jointure COM : {len(df_merged)} lignes")
+        logger.info(f"  Après jointure COM : {len(df_merged)} lignes")
     else:
-        logger.warning("  ⚠️ Jointure COM ignorée (données ou clé manquantes)")
+        logger.warning("  Jointure COM ignorée (données ou clé manquantes)")
 
     del df_result, df_plv, df_com
     gc.collect()
 
-    logger.info(f"  ✅ Reconstruction terminée : {len(df_merged)} lignes")
+    logger.info(f"  Reconstruction terminée : {len(df_merged)} lignes")
     return df_merged
 
 
@@ -431,14 +431,14 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
                 pd.to_datetime(df_clean['date_prelevement'], format='mixed', errors='coerce')
                 .dt.strftime('%Y-%m-%d')
             )
-            logger.info("  ✅ Dates converties (ISO 8601)")
+            logger.info("  Dates converties (ISO 8601)")
         except Exception as e:
-            logger.warning(f"  ⚠️ Conversion dates : {e}")
+            logger.warning(f"  Conversion dates : {e}")
 
     # 2. Résultat → float
     if 'resultat' in df_clean.columns:
         df_clean['resultat'] = pd.to_numeric(df_clean['resultat'], errors='coerce')
-        logger.info("  ✅ Résultats convertis (float)")
+        logger.info("  Résultats convertis (float)")
 
     # 3. Nettoyage des chaînes
     string_cols = [
@@ -449,7 +449,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         if col in df_clean.columns:
             df_clean[col] = df_clean[col].astype(str).str.strip()
 
-    logger.info("  ✅ Chaînes nettoyées (strip)")
+    logger.info("  Chaînes nettoyées (strip)")
 
     # 3b. Correction mojibake iso-8859-1 mal relu comme UTF-8
     #     Symptôme : "CONDUCTIVITÃ Ã 25Â°C" au lieu de "CONDUCTIVITÉ À 25°C"
@@ -477,9 +477,9 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
             df_clean[col] = fixed
             fixed_count += changed
     if fixed_count:
-        logger.info(f"  ✅ Encodage corrigé : {fixed_count} valeurs réparées (mojibake)")
+        logger.info(f"  Encodage corrigé : {fixed_count} valeurs réparées (mojibake)")
     else:
-        logger.info("  ✅ Encodage OK (aucun mojibake détecté)")
+        logger.info("  Encodage OK (aucun mojibake détecté)")
 
     # 4. Info sur les paramètres disponibles
     if 'nom_parametre' in df_clean.columns:
@@ -487,7 +487,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         examples = ', '.join(df_clean['nom_parametre'].dropna().unique()[:5])
         logger.info(f"  ℹ️ {n} paramètres uniques — ex : {examples}")
 
-    logger.info("✅ Nettoyage terminé")
+    logger.info("Nettoyage terminé")
     return df_clean
 
 
@@ -507,7 +507,7 @@ def deduplicate_data(df: pd.DataFrame) -> pd.DataFrame:
         key = [c for c in ['station_id', 'date_prelevement', 'parametre'] if c in df.columns]
 
     if not key:
-        logger.warning("  ⚠️ Aucune clé de déduplication — étape ignorée")
+        logger.warning("  Aucune clé de déduplication — étape ignorée")
         return df
 
     logger.info(f"  Clé : {key}")
@@ -527,7 +527,7 @@ def validate_custom(df: pd.DataFrame) -> list:
     Validations métier légères, indépendantes de GX.
     Sert de filet de sécurité si GX n'est pas disponible.
     """
-    logger.info("\n🔍 VALIDATION PERSONNALISÉE (fallback / complémentaire)")
+    logger.info("\nVALIDATION PERSONNALISÉE (fallback / complémentaire)")
     issues = []
 
     # Nulls sur clés métier (jamais acceptables)
@@ -536,7 +536,7 @@ def validate_custom(df: pd.DataFrame) -> list:
             nulls = int(df[col].isnull().sum())
             if nulls > 0:
                 pct = nulls / len(df) * 100
-                logger.warning(f"  ⚠️ {col} : {nulls} NULL ({pct:.2f}%) — BLOQUANT")
+                logger.warning(f"  {col} : {nulls} NULL ({pct:.2f}%) — BLOQUANT")
                 issues.append({'column': col, 'type': 'null_key', 'count': nulls, 'blocking': True})
 
     # Nulls sur résultat : normaux pour paramètres qualitatifs (ASPECT, ODEUR…)
@@ -547,7 +547,7 @@ def validate_custom(df: pd.DataFrame) -> list:
             pct = nulls_res / len(df) * 100
             # Qualifier selon le taux
             if pct > 5:
-                logger.warning(f"  ⚠️ resultat : {nulls_res} NULL ({pct:.2f}%) — taux élevé, vérifier")
+                logger.warning(f"  resultat : {nulls_res} NULL ({pct:.2f}%) — taux élevé, vérifier")
                 issues.append({'column': 'resultat', 'type': 'null_high', 'count': nulls_res, 'blocking': False})
             else:
                 logger.info(f"  ℹ️ resultat : {nulls_res} NULL ({pct:.2f}%) — attendu (params qualitatifs)")
@@ -560,7 +560,7 @@ def validate_custom(df: pd.DataFrame) -> list:
             == False
         ]
         if len(bad):
-            logger.warning(f"  ⚠️ {len(bad)} coordonnées hors limites France")
+            logger.warning(f"  {len(bad)} coordonnées hors limites France")
             issues.append({'type': 'invalid_geo', 'count': len(bad)})
 
     # Plages par paramètre
@@ -572,11 +572,11 @@ def validate_custom(df: pd.DataFrame) -> list:
             )
             n = mask.sum()
             if n:
-                logger.warning(f"  ⚠️ {param} : {n} valeurs hors [{lo}, {hi}]")
+                logger.warning(f"  {param} : {n} valeurs hors [{lo}, {hi}]")
                 issues.append({'parametre': param, 'type': 'out_of_range', 'count': n})
 
     if not issues:
-        logger.info("  ✅ Aucun problème détecté")
+        logger.info("  Aucun problème détecté")
     return issues
 
 
@@ -595,7 +595,7 @@ def enrich_data(df: pd.DataFrame) -> pd.DataFrame:
         df_e['record_id'] = key_col.apply(lambda x: hashlib.md5(x.encode()).hexdigest()[:8])
     else:
         df_e['record_id'] = range(len(df_e))
-    logger.info("  ✅ record_id généré")
+    logger.info("  record_id généré")
 
     # quality_flag (vectorisé)
     df_e['quality_flag'] = 'OK'
@@ -605,7 +605,7 @@ def enrich_data(df: pd.DataFrame) -> pd.DataFrame:
         mask_nitrate = df_e['nom_parametre'].str.contains(r'NITRATE|NO3', case=False, na=False) & (df_e['resultat'] > 50)
         df_e.loc[mask_ecoli,   'quality_flag'] = 'ALERT'
         df_e.loc[mask_nitrate, 'quality_flag'] = 'WARNING'
-    logger.info("  ✅ quality_flag calculé")
+    logger.info("  quality_flag calculé")
 
     df_e['processed_date'] = datetime.now().isoformat()
     return df_e
@@ -623,7 +623,7 @@ def save_silver_data(df: pd.DataFrame, filename: str = "silver_clean.csv") -> bo
         logger.info(f"💾 Silver sauvegardé : {filepath} ({size_kb:.2f} KB)")
         return True
     except Exception as e:
-        logger.error(f"❌ Erreur sauvegarde : {e}")
+        logger.error(f"Erreur sauvegarde : {e}")
         return False
 
 
@@ -640,13 +640,13 @@ def main():
     # 1. Charger Bronze
     df = load_bronze_data(BRONZE_PATH)
     if df is None:
-        logger.error("❌ Chargement Bronze impossible — pipeline arrêté")
+        logger.error("Chargement Bronze impossible — pipeline arrêté")
         return
-    logger.info(f"\n📊 Bronze : {len(df)} lignes × {len(df.columns)} colonnes")
+    logger.info(f"\nBronze : {len(df)} lignes × {len(df.columns)} colonnes")
 
     # 1.5. Reconstruire via jointures
     df = reconstruct_data(df)
-    logger.info(f"📊 Après reconstruction : {len(df)} lignes × {len(df.columns)} colonnes")
+    logger.info(f"Après reconstruction : {len(df)} lignes × {len(df.columns)} colonnes")
 
     # 2. Nettoyer
     df = clean_data(df)
@@ -669,7 +669,7 @@ def main():
     # ── Résumé final ──────────────────────────────────────────────────────────
     if success:
         logger.info("\n" + "=" * 80)
-        logger.info("📊 RÉSUMÉ FINAL")
+        logger.info("RÉSUMÉ FINAL")
         logger.info("=" * 80)
         logger.info(f"  Lignes      : {len(df)}")
         logger.info(f"  Colonnes    : {len(df.columns)}")
@@ -690,7 +690,7 @@ def main():
         if gx_result.get('skipped'):
             logger.info("  GX          : ignoré (non disponible)")
         else:
-            gx_ok = '✅ SUCCÈS' if gx_result.get('success') else '❌ ÉCHEC'
+            gx_ok = 'SUCCES' if gx_result.get('success') else 'ECHEC'
             stats = gx_result.get('statistics', {})
             logger.info(f"  GX          : {gx_ok} | "
                         f"{stats.get('successful_expectations', '?')} / "
@@ -698,9 +698,9 @@ def main():
 
         logger.info(f"  Problèmes custom : {len(custom_issues)}")
         logger.info("=" * 80)
-        logger.info("✅ PIPELINE SILVER TERMINÉ\n")
+        logger.info("PIPELINE SILVER TERMINÉ\n")
     else:
-        logger.error("❌ Sauvegarde échouée — vérifier les droits d'écriture")
+        logger.error("Sauvegarde échouée — vérifier les droits d'écriture")
 
 
 # ============================================================================
@@ -711,8 +711,8 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        logger.warning("\n⚠️ Pipeline arrêté par l'utilisateur")
+        logger.warning("\nPipeline arrêté par l'utilisateur")
     except Exception as e:
-        logger.critical(f"❌ Erreur critique : {e}")
+        logger.critical(f"Erreur critique : {e}")
         import traceback
         traceback.print_exc()

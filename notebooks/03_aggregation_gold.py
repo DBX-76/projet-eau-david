@@ -54,13 +54,13 @@ def load_silver_data(filepath: str) -> pd.DataFrame:
     try:
         logger.info(f"📂 Chargement données Silver : {filepath}")
         df = pd.read_csv(filepath, sep=SEPARATOR, encoding=ENCODING)
-        logger.info(f"✅ {len(df)} lignes chargées")
+        logger.info(f"{len(df)} lignes chargées")
         return df
     except FileNotFoundError:
-        logger.error(f"❌ Fichier non trouvé : {filepath}")
+        logger.error(f"Fichier non trouvé : {filepath}")
         return None
     except Exception as e:
-        logger.error(f"❌ Erreur chargement : {e}")
+        logger.error(f"Erreur chargement : {e}")
         return None
 
 
@@ -70,7 +70,7 @@ def load_silver_data(filepath: str) -> pd.DataFrame:
 
 def calculate_global_kpis(df: pd.DataFrame) -> pd.DataFrame:
     """Calcule les indicateurs clés globaux."""
-    logger.info("\n📊 CALCUL DES KPIs GLOBAUX")
+    logger.info("\nCALCUL DES KPIs GLOBAUX")
     
     kpis = {}
     
@@ -133,7 +133,7 @@ def calculate_global_kpis(df: pd.DataFrame) -> pd.DataFrame:
         kpis['quality_alert'] = quality_dist.get('ALERT', 0)
         kpis['quality_unknown'] = quality_dist.get('UNKNOWN', 0)
     
-    logger.info(f"  ✅ {len(kpis)} KPIs générés")
+    logger.info(f"  {len(kpis)} KPIs générés")
     return pd.DataFrame([kpis])
 
 
@@ -146,7 +146,7 @@ def aggregate_by_department(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("\n🗺️ AGRÉGATION PAR DÉPARTEMENT")
     
     if 'code_departement' not in df.columns:
-        logger.warning("  ⚠️ Colonne 'code_departement' absente")
+        logger.warning("  Colonne 'code_departement' absente")
         return pd.DataFrame()
     
     dept_agg = df.groupby('code_departement', as_index=False).agg({
@@ -172,7 +172,7 @@ def aggregate_by_department(df: pd.DataFrame) -> pd.DataFrame:
     ).round(3)
     
     dept_agg = dept_agg.sort_values('pollution_score', ascending=False)
-    logger.info(f"  ✅ {len(dept_agg)} départements analysés")
+    logger.info(f"  {len(dept_agg)} départements analysés")
     return dept_agg
 
 
@@ -182,10 +182,10 @@ def aggregate_by_department(df: pd.DataFrame) -> pd.DataFrame:
 
 def get_best_worst_communes(df: pd.DataFrame, n: int = 10) -> tuple:
     """Identifie Top N et Bottom N communes."""
-    logger.info(f"\n🏆 TOP {n} / BOTTOM {n} COMMUNES")
+    logger.info(f"\nTOP {n} / BOTTOM {n} COMMUNES")
     
     if 'nom_commune' not in df.columns or 'resultat' not in df.columns:
-        logger.warning("  ⚠️ Colonnes requises absentes")
+        logger.warning("  Colonnes requises absentes")
         return pd.DataFrame(), pd.DataFrame()
     
     commune_quality = df.groupby('nom_commune', as_index=False).agg({
@@ -199,7 +199,7 @@ def get_best_worst_communes(df: pd.DataFrame, n: int = 10) -> tuple:
     best = commune_quality.nsmallest(n, 'avg_pollution')[['nom_commune', 'samplings', 'avg_pollution']]
     worst = commune_quality.nlargest(n, 'avg_pollution')[['nom_commune', 'samplings', 'avg_pollution']]
     
-    logger.info(f"  ✅ {len(best)} meilleures et {len(worst)} pires communes identifiées")
+    logger.info(f"  {len(best)} meilleures et {len(worst)} pires communes identifiées")
     return best, worst
 
 
@@ -212,14 +212,14 @@ def analyze_timeseries(df: pd.DataFrame, parameter: str = "Nitrates") -> pd.Data
     logger.info(f"\n📈 SÉRIE TEMPORELLE - {parameter}")
     
     if 'nom_parametre' not in df.columns or 'date_prelevement' not in df.columns:
-        logger.warning("  ⚠️ Colonnes requises absentes")
+        logger.warning("  Colonnes requises absentes")
         return pd.DataFrame()
     
     try:
         df_param = df[df['nom_parametre'].str.lower() == parameter.lower()].copy()
         
         if len(df_param) == 0:
-            logger.warning(f"  ⚠️ Aucun enregistrement pour {parameter}")
+            logger.warning(f"  Aucun enregistrement pour {parameter}")
             return pd.DataFrame()
         
         df_param['date_prelevement'] = pd.to_datetime(df_param['date_prelevement'], errors='coerce')
@@ -232,10 +232,10 @@ def analyze_timeseries(df: pd.DataFrame, parameter: str = "Nitrates") -> pd.Data
         ts_agg.columns = ['year_month', 'avg_value', 'std_value', 'min_value', 'max_value', 'sample_count']
         ts_agg['year_month'] = ts_agg['year_month'].astype(str)
         
-        logger.info(f"  ✅ {len(ts_agg)} mois analysés")
+        logger.info(f"  {len(ts_agg)} mois analysés")
         return ts_agg
     except Exception as e:
-        logger.error(f"  ❌ Erreur : {e}")
+        logger.error(f"  Erreur : {e}")
         return pd.DataFrame()
 
 
@@ -245,7 +245,7 @@ def analyze_timeseries(df: pd.DataFrame, parameter: str = "Nitrates") -> pd.Data
 
 def analyze_critical_parameters(df: pd.DataFrame) -> pd.DataFrame:
     """Analyse les paramètres critiques."""
-    logger.info("\n⚠️ ANALYSE PARAMÈTRES CRITIQUES")
+    logger.info("\nANALYSE PARAMÈTRES CRITIQUES")
     
     critical_params = ['Nitrates', 'E.coli', 'pH', 'Coliformes', 'Pesticides']
     analysis = []
@@ -275,7 +275,7 @@ def analyze_critical_parameters(df: pd.DataFrame) -> pd.DataFrame:
         })
     
     analysis_df = pd.DataFrame(analysis)
-    logger.info(f"  ✅ Analyse de {len(analysis_df)} paramètres critiques")
+    logger.info(f"  Analyse de {len(analysis_df)} paramètres critiques")
     return analysis_df
 
 
@@ -323,7 +323,7 @@ def save_gold_files(kpis: pd.DataFrame, dept_agg: pd.DataFrame,
         logger.info(f"💾 {len(files_saved)} fichiers Gold sauvegardés")
         return True
     except Exception as e:
-        logger.error(f"❌ Erreur sauvegarde Gold : {e}")
+        logger.error(f"Erreur sauvegarde Gold : {e}")
         return False
 
 
@@ -341,10 +341,10 @@ def main():
     # 1. Charger les données Silver
     df = load_silver_data(SILVER_PATH)
     if df is None:
-        logger.error("❌ Impossible de charger Silver. Pipeline arrêté.")
+        logger.error("Impossible de charger Silver. Pipeline arrêté.")
         return
     
-    logger.info(f"\n📊 Données Silver chargées : {len(df)} lignes × {len(df.columns)} colonnes")
+    logger.info(f"\nDonnées Silver chargées : {len(df)} lignes × {len(df.columns)} colonnes")
     
     # 2. Calculer KPIs globaux
     kpis = calculate_global_kpis(df)
@@ -366,7 +366,7 @@ def main():
     
     if success:
         logger.info("\n" + "=" * 80)
-        logger.info("📊 RÉSUMÉ DE L'AGRÉGATION GOLD")
+        logger.info("RÉSUMÉ DE L'AGRÉGATION GOLD")
         logger.info("=" * 80)
         
         if not kpis.empty:
@@ -385,14 +385,14 @@ def main():
             logger.info(f"🥉 Pire commune : {worst_communes.iloc[0]['nom_commune']} (pollution moyenne: {worst_communes.iloc[0]['avg_pollution']})")
         
         if not critical_params.empty:
-            logger.info(f"\n⚠️ Paramètres critiques analysés : {len(critical_params)}")
+            logger.info(f"\nParamètres critiques analysés : {len(critical_params)}")
             for _, row in critical_params.iterrows():
                 logger.info(f"  - {row['parameter']}: {row['count']} mesures, {row['percent_exceeding']}% hors seuil")
         
         logger.info("\n" + "=" * 80)
-        logger.info("✅ AGRÉGATION GOLD COMPLÈTE\n")
+        logger.info("AGRÉGATION GOLD COMPLÈTE\n")
     else:
-        logger.error("❌ Erreur lors de la sauvegarde Gold. Pipeline arrêté.")
+        logger.error("Erreur lors de la sauvegarde Gold. Pipeline arrêté.")
 
 
 # ============================================================================
@@ -403,8 +403,8 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        logger.warning("\n⚠️ Pipeline arrêté par l'utilisateur")
+        logger.warning("\nPipeline arrêté par l'utilisateur")
     except Exception as e:
-        logger.critical(f"❌ Erreur critique : {e}")
+        logger.critical(f"Erreur critique : {e}")
         import traceback
         traceback.print_exc()

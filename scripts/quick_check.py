@@ -17,16 +17,16 @@ ENCODING = 'iso-8859-1'
 SEPARATOR = ','
 
 print("\n" + "=" * 80)
-print("🔍 ANALYSE RAPIDE DES COLONNES")
+print("ANALYSE RAPIDE DES COLONNES")
 print("=" * 80)
 
 try:
-    print("\n📥 Téléchargement du ZIP...")
+    print("\nTéléchargement du ZIP...")
     response = requests.get(ZIP_URL, timeout=60, allow_redirects=True)
     response.raise_for_status()
 
     file_size_mb = len(response.content) / 1024 / 1024
-    print(f"✅ Téléchargé : {file_size_mb:.2f} MB")
+    print(f"Téléchargé : {file_size_mb:.2f} MB")
 
     # Analyser le ZIP
     zip_buffer = io.BytesIO(response.content)
@@ -36,14 +36,14 @@ try:
         txt_files = [f for f in file_list if f.lower().endswith('.txt')]
 
         if not txt_files:
-            print("❌ Aucun fichier .txt trouvé")
+            print("Aucun fichier .txt trouvé")
             exit(1)
 
-        print(f"\n📄 Fichiers .txt trouvés : {txt_files}")
+        print(f"\nFichiers .txt trouvés : {txt_files}")
 
         # Analyser le premier fichier seulement
         first_file = txt_files[0]
-        print(f"\n📊 Analyse de : {first_file}")
+        print(f"\nAnalyse de : {first_file}")
 
         # Lire seulement les 10 premières lignes
         content = zip_ref.read(first_file)
@@ -51,21 +51,21 @@ try:
         lines = text.split('\n')[:10]  # 10 premières lignes
 
         if not lines:
-            print("❌ Fichier vide")
+            print("Fichier vide")
             exit(1)
 
         # Première ligne = en-têtes
         header_line = lines[0].strip()
         columns = header_line.split(SEPARATOR)
 
-        print(f"\n📋 COLONNES ({len(columns)} colonnes) :")
+        print(f"\nCOLONNES ({len(columns)} colonnes) :")
         print("=" * 80)
 
         for i, col in enumerate(columns, 1):
             print(f"   {i:02d}. {col}")
 
         print("\n" + "=" * 80)
-        print("📋 ÉCHANTILLON DE DONNÉES :")
+        print("ÉCHANTILLON DE DONNÉES :")
         print("=" * 80)
 
         for i in range(1, min(6, len(lines))):
@@ -75,10 +75,10 @@ try:
                 print(f"   L{i}: {sample}")
 
         print("\n" + "=" * 80)
-        print("✅ ANALYSE TERMINÉE")
+        print("ANALYSE TERMINÉE")
         print("=" * 80 + "\n")
 
 except Exception as e:
-    print(f"\n❌ Erreur : {e}")
+    print(f"\nErreur : {e}")
     import traceback
     traceback.print_exc()

@@ -2,19 +2,19 @@ import pandas as pd
 import os
 
 print("\n" + "=" * 80)
-print("🔍 DIAGNOSTIC DU FICHIER SILVER")
+print("DIAGNOSTIC DU FICHIER SILVER")
 print("=" * 80)
 
 silver_path = "./data/clean/silver_clean.csv"
 
 if not os.path.exists(silver_path):
-    print(f"❌ Fichier non trouvé : {silver_path}")
+    print(f"Fichier non trouvé : {silver_path}")
     exit(1)
 
 print(f"\n📂 Chargement : {silver_path}")
 df = pd.read_csv(silver_path, sep=';', encoding='iso-8859-1', nrows=1000)
 
-print(f"✅ Chargé : {len(df)} lignes × {len(df.columns)} colonnes")
+print(f"Chargé : {len(df)} lignes × {len(df.columns)} colonnes")
 
 # ============================================================================
 # 1. COLONNES DISPONIBLES
@@ -43,7 +43,7 @@ if cols_commune:
         for val in df[col].dropna().unique()[:5]:
             print(f"      - '{val}'")
 else:
-    print("❌ Aucune colonne avec 'commune'")
+    print("Aucune colonne avec 'commune'")
 
 # ============================================================================
 # 3. COLONNES CONTENANT "PARAMETRE" OU "NOM" (POUR LES PARAMÈTRES)
@@ -66,11 +66,11 @@ if cols_param:
         nitrate_variants = df[df[col].str.contains('NITRATE|Nitrate|NO3|nitrate', case=False, na=False)][col].unique()
         if len(nitrate_variants) > 0:
             for val in nitrate_variants[:10]:
-                print(f"      ✅ '{val}'")
+                print(f"      '{val}'")
         else:
-            print(f"      ❌ Aucun enregistrement trouvé")
+            print(f"      Aucun enregistrement trouvé")
 else:
-    print("❌ Aucune colonne paramètre trouvée")
+    print("Aucune colonne paramètre trouvée")
 
 # ============================================================================
 # 4. COLONNES CONTENANT "RESULTAT" (POUR LES VALEURS MESURÉES)
@@ -81,12 +81,12 @@ print("=" * 80)
 cols_resultat = [c for c in df.columns if 'resultat' in c.lower() or 'valeur' in c.lower()]
 if cols_resultat:
     for col in cols_resultat:
-        print(f"\n📊 Colonne : {col}")
+        print(f"\nColonne : {col}")
         print(f"   Type: {df[col].dtype}")
         print(f"   Non-nulls: {df[col].notna().sum()} / {len(df)}")
         print(f"   Stats : min={df[col].min()}, max={df[col].max()}, mean={df[col].mean():.2f}")
 else:
-    print("❌ Aucune colonne résultat trouvée")
+    print("Aucune colonne résultat trouvée")
 
 # ============================================================================
 # 5. COLONNES CONTENANT "DATE"
@@ -102,7 +102,7 @@ if cols_date:
         print(f"   Non-nulls: {df[col].notna().sum()} / {len(df)}")
         print(f"   Exemples : {df[col].dropna().unique()[:3].tolist()}")
 else:
-    print("❌ Aucune colonne date trouvée")
+    print("Aucune colonne date trouvée")
 
 # ============================================================================
 # 6. COLONNES CONTENANT "DEPT" OU "CODE" GÉOGRAPHIQUE
@@ -120,7 +120,7 @@ if cols_geo:
         for val in df[col].dropna().unique()[:5]:
             print(f"      - '{val}'")
 else:
-    print("❌ Aucune colonne géographique trouvée")
+    print("Aucune colonne géographique trouvée")
 
 # ============================================================================
 # 7. APERÇU GLOBAL
@@ -131,5 +131,5 @@ print("=" * 80)
 print(df.head(3).to_string())
 
 print("\n" + "=" * 80)
-print("✅ DIAGNOSTIC TERMINÉ")
+print("DIAGNOSTIC TERMINÉ")
 print("=" * 80 + "\n")

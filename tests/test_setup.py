@@ -16,9 +16,9 @@ print("=" * 80 + "\n")
 print("✓ Test 1 : Version Python")
 print(f"  Python {sys.version.split()[0]} (requis : 3.9+)")
 if sys.version_info < (3, 9):
-    print("  ❌ ERREUR : Python 3.9+ requis")
+    print("  ERREUR : Python 3.9+ requis")
     sys.exit(1)
-print("  ✅ OK\n")
+print("  OK\n")
 
 # Test 2 : Dépendances
 print("✓ Test 2 : Dépendances")
@@ -34,16 +34,16 @@ all_installed = True
 for package, desc in required_packages.items():
     try:
         __import__(package)
-        print(f"  ✅ {package} : {desc}")
+        print(f"  {package} : {desc}")
     except ImportError:
-        print(f"  ❌ {package} : MANQUANT ({desc})")
+        print(f"  {package} : MANQUANT ({desc})")
         all_installed = False
 
 if not all_installed:
-    print("\n  ⚠️ Installation manquante !")
+    print("\n  Installation manquante !")
     print("  Exécutez : pip install -r requirements.txt\n")
     sys.exit(1)
-print("  ✅ OK\n")
+print("  OK\n")
 
 # Test 3 : Structure de dossiers
 print("✓ Test 3 : Structure de dossiers")
@@ -58,15 +58,15 @@ required_dirs = {
 all_dirs_exist = True
 for dirname, desc in required_dirs.items():
     if os.path.isdir(dirname):
-        print(f"  ✅ {dirname}/ : {desc}")
+        print(f"  {dirname}/ : {desc}")
     else:
-        print(f"  ❌ {dirname}/ : MANQUANT")
+        print(f"  {dirname}/ : MANQUANT")
         all_dirs_exist = False
 
 if not all_dirs_exist:
-    print("\n  ⚠️ Dossiers manquants !\n")
+    print("\n  Dossiers manquants !\n")
     sys.exit(1)
-print("  ✅ OK\n")
+print("  OK\n")
 
 # Test 4 : Fichiers clés
 print("✓ Test 4 : Fichiers clés")
@@ -85,15 +85,15 @@ all_files_exist = True
 for filepath, desc in required_files.items():
     if os.path.isfile(filepath):
         size_kb = os.path.getsize(filepath) / 1024
-        print(f"  ✅ {filepath} : {desc} ({size_kb:.1f} KB)")
+        print(f"  {filepath} : {desc} ({size_kb:.1f} KB)")
     else:
-        print(f"  ❌ {filepath} : MANQUANT")
+        print(f"  {filepath} : MANQUANT")
         all_files_exist = False
 
 if not all_files_exist:
-    print("\n  ⚠️ Fichiers manquants !\n")
+    print("\n  Fichiers manquants !\n")
     sys.exit(1)
-print("  ✅ OK\n")
+print("  OK\n")
 
 # Test 5 : Import des modules locaux
 print("✓ Test 5 : Modules locaux")
@@ -105,13 +105,13 @@ try:
         with open(f'notebooks/{notebook}', 'r', encoding='utf-8') as f:
             try:
                 ast.parse(f.read())
-                print(f"  ✅ {notebook} : Syntaxe OK")
+                print(f"  {notebook} : Syntaxe OK")
             except SyntaxError as e:
-                print(f"  ❌ {notebook} : Erreur de syntaxe - {e}")
+                print(f"  {notebook} : Erreur de syntaxe - {e}")
                 sys.exit(1)
-    print("  ✅ OK\n")
+    print("  OK\n")
 except Exception as e:
-    print(f"  ❌ Erreur vérification syntaxe : {e}\n")
+    print(f"  Erreur vérification syntaxe : {e}\n")
     sys.exit(1)
 
 # Test 6 : Vérifier la config
@@ -120,10 +120,10 @@ try:
     import json
     with open('config/databricks_job_config.json', 'r') as f:
         config = json.load(f)
-        print(f"  ✅ databricks_job_config.json : {config.get('name', 'Job')}")
-    print("  ✅ OK\n")
+        print(f"  databricks_job_config.json : {config.get('name', 'Job')}")
+    print("  OK\n")
 except Exception as e:
-    print(f"  ⚠️ databricks_job_config.json : {e}\n")
+    print(f"  databricks_job_config.json : {e}\n")
 
 # Test 7 : URLs data.gouv
 print("✓ Test 7 : Configuration URL")
@@ -135,16 +135,16 @@ try:
     with open('notebooks/01_ingestion_bronze.py', 'r') as f:
         content = f.read()
         if 'data.gouv.fr' in content and 'qualite_eau_2025' in content:
-            print(f"  ✅ URL data.gouv.fr 2025 configurée")
+            print(f"  URL data.gouv.fr 2025 configurée")
         else:
-            print(f"  ⚠️ URL data.gouv.fr à vérifier")
-    print("  ✅ OK\n")
+            print(f"  URL data.gouv.fr à vérifier")
+    print("  OK\n")
 except Exception as e:
-    print(f"  ⚠️ Erreur vérification URL : {e}\n")
+    print(f"  Erreur vérification URL : {e}\n")
 
 # Résumé final
 print("=" * 80)
-print("✅ TOUT EST CONFIGURÉ CORRECTEMENT !")
+print("TOUT EST CONFIGURÉ CORRECTEMENT !")
 print("=" * 80)
 print("\n📝 Prochaines étapes :\n")
 print("  1. Lire QUICKSTART.md")
