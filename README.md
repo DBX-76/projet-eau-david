@@ -220,3 +220,21 @@ La pipeline utilise **Great Expectations** avec :
 - Valeurs non-NULL
 - Valeurs dans plages acceptables
 
+## Databricks
+
+### Ce qui a été fait
+
+Les fichiers CSV de la couche Gold (générés localement) ont été importés dans Databricks pour :
+
+1. **Convertir les CSV en tables Delta** - Utilisation de PySpark pour créer des tables managées
+2. **Explorer les données avec PySpark** - Requêtes sur les DataFrames et affichage des résultats
+3. **Tester les requêtes SQL** - Interrogation directe des tables Delta
+
+### Ce qui n'a PAS été fait
+
+- Le pipeline d'ingestion (Bronze/Silver) n'a pas été réexécuté dans Databricks
+- Seuls les fichiers Gold finaux ont été utilisés
+- Aucune transformation supplémentaire n'a été appliquée
+
+### voir le répertoire notebook/notebook_databricks_eau
+
