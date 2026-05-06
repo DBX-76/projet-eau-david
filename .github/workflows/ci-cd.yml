@@ -51,6 +51,8 @@ jobs:
           print(f'GE Validation: {\"PASS\" if result.success else \"FAIL\"}')
           assert result.success, 'Great Expectations failed on sample data'
           "
+        env:
+          SAMPLE_DATA_PATH: data/sample/sample_eau.csv
 
       - name: Check Databricks readiness
         run: |
