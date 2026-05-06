@@ -60,24 +60,23 @@ Projet implémentant une **architecture Médaillon** (Bronze → Silver → Gold
 
 ```
 eau-project/
-├── README.md                    # Ce fichier
-├── pyproject.toml              # Configuration Python (packaging)
-├── requirements.txt            # Dépendances
-├── .gitignore                  # Fichiers à ignorer Git
-├── .env.example                # Template variables d'environnement
+├── README.md                    
+├── requirements.txt            
+├── .gitignore                  
 │
-├── 📂 src/eau/                 # CODE MÉTIER (réutilisable)
+├── 📂 src/eau/                
 │   ├── __init__.py
 │   ├── bronze.py               # Logique Bronze
 │   ├── silver.py               # Logique Silver
 │   └── gold.py                 # Logique Gold
 │
-├── 📂 notebooks/               # ANALYSES & EXPLORATIONS
+├── 📂 notebooks/               
 │   ├── 01_ingestion_bronze.py      # Pipeline d'ingestion
 │   ├── 02_transformation_silver.py # Pipeline de nettoyage/validation
 │   └── 03_aggregation_gold.py      # Pipeline d'agrégation
+│   └── notebook_databricks_eau     # Notebook commité de la plateforme Databricks
 │
-├── 📂 scripts/                 # OUTILS DE DÉVELOPPEMENT
+├── 📂 scripts/                 
 │   ├── README.md               # Documentation des scripts
 │   ├── check_gold_output.py    # Diagnostic fichiers Gold
 │   ├── check_silver.py         # Diagnostic couche Silver
@@ -85,12 +84,12 @@ eau-project/
 │   ├── quick_check_silver.py   # Diagnostic rapide Silver
 │   └── analyze_zip.py          # Analyse structure ZIP
 │
-├── 📂 tests/                   # TESTS UNITAIRES
+├── 📂 tests/                 
 │   ├── __init__.py
 │   ├── test_setup.py
 │   └── test_columns.py
 │
-├── 📂 data/                    # DONNÉES
+├── 📂 data/                  
 │   ├── bronze/
 │   │   └── bronze_combined.csv   
 │   ├── clean/
