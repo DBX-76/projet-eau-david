@@ -235,5 +235,5 @@ Les fichiers CSV de la couche Gold (générés localement) ont été importés d
 - Seuls les fichiers Gold finaux ont été utilisés
 - Aucune transformation supplémentaire n'a été appliquée
 
-### voir le répertoire notebook/notebook_databricks_eau
+voir le répertoire notebook/notebook_databricks_eau
 
