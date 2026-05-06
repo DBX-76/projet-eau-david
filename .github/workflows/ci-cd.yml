@@ -44,10 +44,14 @@ jobs:
           suite = context.suites.add(gx.ExpectationSuite(name='sample_suite'))
           suite.add_expectation(gx.expectations.ExpectColumnValuesToNotBeNull(column='id_prelevement'))
           suite.add_expectation(gx.expectations.ExpectColumnValuesToBeOfType(column='resultat', type_='float64'))
-          validator = context.sources.pandas_default.read_dataframe(df)
-          result = context.run_validation_definition(
-              gx.ValidationDefinition(name='sample_val', data=validator, suite=suite)
+          datasource = context.data_sources.add_pandas(name='sample_ds')
+          asset = datasource.add_dataframe_asset(name='sample_asset')
+          batch_def = asset.add_batch_definition_whole_dataframe(name='sample_batch')
+          batch = batch_def.get_batch(batch_parameters={'dataframe': df})
+          validation_def = context.validation_definitions.add(
+              gx.ValidationDefinition(name='sample_validation', data=batch_def, suite=suite)
           )
+          result = validation_def.run(batch_parameters={'dataframe': df})
           print(f'GE Validation: {\"PASS\" if result.success else \"FAIL\"}')
           assert result.success, 'Great Expectations failed on sample data'
           "
