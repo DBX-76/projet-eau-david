@@ -1,12 +1,10 @@
 # Eau-Project : Pipeline Data Engineering — Qualité d'Eau
 
-**Statut :** Production-Ready | **Version :** 1.0.0 | **Dernière mise à jour :** Mai 2026
-
 ---
 
 ## Vue d'ensemble
 
-Projet complet de **Data Engineering** implémentant une **architecture Médaillon** (Bronze → Silver → Gold) pour transformer les données brutes de qualité d'eau en indicateurs métier exploitables.
+Projet implémentant une **architecture Médaillon** (Bronze → Silver → Gold) pour transformer les données brutes de qualité d'eau en indicateurs métier exploitables.
 
 ### Objectifs
 
@@ -14,7 +12,6 @@ Projet complet de **Data Engineering** implémentant une **architecture Médaill
 - Nettoyer, valider et standardiser (couche Silver)
 - Générer des KPIs et agrégations (couche Gold)
 - Intégrer **Great Expectations v0.18+** pour la qualité
-- Prêt pour Azure Databricks et cloud deployment
 
 ---
 
