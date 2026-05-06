@@ -1,0 +1,71 @@
+{
+  "description": "Configuration Databricks Job pour le pipeline d'eau",
+  "job_clusters": [
+    {
+      "job_cluster_key": "eau_cluster",
+      "new_cluster": {
+        "spark_version": "13.3.x-scala2.12",
+        "node_type_id": "Standard_D4s_v3",
+        "num_workers": 2,
+        "aws_attributes": {
+          "availability": "SPOT_WITH_FALLBACK"
+        },
+        "libraries": [
+          {
+            "pypi": {
+              "package": "great_expectations"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "task_key": "ingestion_bronze",
+      "job_cluster_key": "eau_cluster",
+      "notebook_task": {
+        "notebook_path": "/Users/your-email/eau-project/01_ingestion_bronze",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 3600,
+      "email_notifications": {}
+    },
+    {
+      "task_key": "transformation_silver",
+      "job_cluster_key": "eau_cluster",
+      "notebook_task": {
+        "notebook_path": "/Users/your-email/eau-project/02_transformation_silver",
+        "source": "WORKSPACE"
+      },
+      "depends_on": [
+        {
+          "task_key": "ingestion_bronze"
+        }
+      ],
+      "timeout_seconds": 3600,
+      "email_notifications": {}
+    },
+    {
+      "task_key": "aggregation_gold",
+      "job_cluster_key": "eau_cluster",
+      "notebook_task": {
+        "notebook_path": "/Users/your-email/eau-project/03_aggregation_gold",
+        "source": "WORKSPACE"
+      },
+      "depends_on": [
+        {
+          "task_key": "transformation_silver"
+        }
+      ],
+      "timeout_seconds": 3600,
+      "email_notifications": {}
+    }
+  ],
+  "schedule": {
+    "quartz_cron_expression": "0 2 * * ? *",
+    "timezone_id": "Europe/Paris"
+  },
+  "timeout_seconds": 0,
+  "name": "Pipeline Qualité Eau - Full Stack"
+}

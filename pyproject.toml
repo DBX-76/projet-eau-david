@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eau-project"
+version = "1.0.0"
+description = "Pipeline Medallion pour analyse de qualité d'eau — données.gouv.fr"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "eau-project", email = "contact@eau-project.local"}
+]
+keywords = ["data-engineering", "water-quality", "medallion-architecture", "great-expectations"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+dependencies = [
+    "pandas>=1.5.0",
+    "numpy>=1.23.0",
+    "requests>=2.28.0",
+    "great-expectations>=0.18.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "flake8>=6.0",
+    "isort>=5.12",
+]
+viz = [
+    "plotly>=5.0",
+    "matplotlib>=3.5",
+]
+databricks = [
+    "pyspark>=3.2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/user/eau-project"
+Documentation = "https://github.com/user/eau-project#readme"
+Repository = "https://github.com/user/eau-project"
+Issues = "https://github.com/user/eau-project/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = "--cov=src/eau --cov-report=html --cov-report=term-missing"

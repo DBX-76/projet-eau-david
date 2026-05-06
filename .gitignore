@@ -1,0 +1,101 @@
+# Byte-Compiled Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+env.bak/
+venv.bak/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+*.cover
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Data Files (local cleanup)
+data/bronze/*.csv
+!data/bronze/*_sample.csv
+data/clean/*.csv
+!data/clean/*_sample.csv
+data/aggregates/*.csv
+data/**/*.csv.bak
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Configuration (secrets)
+config/azure_config.json
+config/databricks_config.json
+.env
+.env.local
+
+# OS
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Temporary Files
+*.tmp
+*.temp
+*~
+.~*
+
+# Build & Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Documentation Build
+docs/_build/
+docs/.doctrees/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/

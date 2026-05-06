@@ -1,0 +1,2 @@
+parameter;count;mean;median;std;min;max;threshold;exceedances;percent_exceeding
+pH;273307;7.555;7.6;0.456;0.0;13.7;;0;0

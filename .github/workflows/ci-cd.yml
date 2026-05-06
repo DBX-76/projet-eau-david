@@ -1,0 +1,58 @@
+name: CI/CD Pipeline - Water Quality
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+        # Sécurité: Installe pytest-cov si manquant pour éviter l'échec de l'artifact
+        pip install pytest-cov || true
+
+    - name: Debug - List Data Files (Sécurité)
+      run: |
+        echo "🔍 Vérification des fichiers de données présents :"
+        find ./data -name "*.csv" -type f
+        # Cela t'aidera à voir en direct si le sample a bien été poussé
+
+    - name: Run Unit Tests
+      run: |
+        # --ignore=notebooks pour éviter de lancer les .py comme des tests si mal configurés
+        pytest tests/ -v --tb=short
+
+    - name: Validate Data Quality
+      run: |
+        python scripts/quick_check.py
+      # Si tu veux être strict (le pipeline rouge si la donnée est mauvaise ou manquante):
+      # leave as is.
+      # Si tu veux juste un warning sans bloquer le reste (déconseillé pour la prod):
+      # continue-on-error: true
+
+    - name: Upload test results & Coverage
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-and-coverage
+        path: |
+          htmlcov/
+          .coverage
+          pytest-results.xml
+        retention-days: 5

@@ -1,0 +1,40 @@
+# Core Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+#pyspark>=3.5.0
+
+# API & Web
+requests>=2.31.0
+urllib3>=2.0.0
+
+# File Formats
+openpyxl>=3.1.0  # Support Excel files
+
+# Validation & Quality
+great-expectations>=0.18.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Development & Utilities
+python-dotenv>=1.0.0
+PyYAML>=6.0
+
+# Databricks (optional, for cloud environment)
+databricks-sql-connector>=3.0.0
+databricks-cli>=0.18.0
+
+# Formatters & Linters (development only)
+black>=23.0.0
+pylint>=2.17.0
+flake8>=6.1.0
+
+# Jupyter (optional, for notebook development)
+jupyter>=1.0.0
+ipython>=8.12.0
+
+# Visualization (optional)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.14.0
