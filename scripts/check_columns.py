@@ -28,7 +28,7 @@ SEPARATOR = ','
 def analyze_columns():
     """Analyse les colonnes réelles des données."""
     logger.info("\n" + "=" * 80)
-        logger.info("ANALYSE DES COLONNES RÉELLES")
+    logger.info("ANALYSE DES COLONNES RÉELLES")
     logger.info("=" * 80)
     
     try:

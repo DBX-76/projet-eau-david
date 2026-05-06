@@ -43,6 +43,7 @@ TIMEOUT = 300  # Délai d'attente maximal pour les requêtes HTTP (en secondes, 
 ENCODING = 'iso-8859-1'  # Encodage des fichiers texte (ISO-8859-1 pour supporter les caractères accentués français)
 SEPARATOR_CSV = ','  # Séparateur de colonnes standard dans les fichiers CSV
 SEPARATOR_FR = ';'  # Séparateur français pour l'export des données (point-virgule au lieu de virgule)
+SEPARATOR = SEPARATOR_CSV  # Séparateur par défaut pour les lectures CSV
 
 # ============================================================================
 # FONCTION PRINCIPALE : INGESTION
