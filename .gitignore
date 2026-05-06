@@ -59,6 +59,7 @@ data/bronze/*.csv
 !data/bronze/*_sample.csv
 data/clean/*.csv
 !data/clean/*_sample.csv
+data/sample/*.csv
 data/aggregates/*.csv
 data/**/*.csv.bak
 
