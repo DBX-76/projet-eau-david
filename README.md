@@ -104,7 +104,21 @@ eau-project/
 └── 📂 gx/                      # GREAT EXPECTATIONS
     └── (contexte éphémère)
 ```
+---
+## CI/CD avec GitHub Actions
 
+![CI Status](https://github.com/DBX-76/projet-eau-david/actions/workflows/ci-cd.yml/badge.svg)
+
+Ce projet intègre un pipeline de validation automatique via GitHub Actions :
+
+- Linting : Vérification de la syntaxe Python (flake8)
+- Tests unitaires : Exécution sur un échantillon de données (data/sample/)
+- Validation qualité : Great Expectations sur le schéma et les types
+- Préparation Databricks : Vérification de la structure projet
+
+Le workflow se déclenche automatiquement à chaque push ou pull_request sur la branche main.
+
+Voir les exécutions : https://github.com/DBX-76/projet-eau-david/actions
 ---
 
 ## Quick Start
