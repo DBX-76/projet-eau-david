@@ -1,48 +1,46 @@
-# 🌊 Eau-Project : Pipeline Data Engineering — Qualité d'Eau
+# Eau-Project : Pipeline Data Engineering — Qualité d'Eau
 
-**Statut :** ✅ Production-Ready | **Version :** 1.0.0 | **Dernière mise à jour :** Mai 2026
+**Statut :** Production-Ready | **Version :** 1.0.0 | **Dernière mise à jour :** Mai 2026
 
 ---
 
-## 📋 Vue d'ensemble
+## Vue d'ensemble
 
 Projet complet de **Data Engineering** implémentant une **architecture Médaillon** (Bronze → Silver → Gold) pour transformer les données brutes de qualité d'eau en indicateurs métier exploitables.
 
-### 🎯 Objectifs
+### Objectifs
 
-- ✅ Ingérer automatiquement les données depuis [data.gouv.fr](https://www.data.gouv.fr/)
-- ✅ Nettoyer, valider et standardiser (couche Silver)
-- ✅ Générer des KPIs et agrégations (couche Gold)
-- ✅ Intégrer **Great Expectations v0.18+** pour la qualité
-- ✅ Prêt pour Azure Databricks et cloud deployment
+- Ingérer automatiquement les données depuis [data.gouv.fr](https://www.data.gouv.fr/)
+- Nettoyer, valider et standardiser (couche Silver)
+- Générer des KPIs et agrégations (couche Gold)
+- Intégrer **Great Expectations v0.18+** pour la qualité
+- Prêt pour Azure Databricks et cloud deployment
 
 ---
 
-## 🏗️ Architecture Médaillon
+## Architecture Médaillon
 
 ```
-🌐 data.gouv.fr
+ data.gouv.fr
     ↓
-📦 BRONZE (Raw Data)
+ BRONZE (Raw Data)
     • 13M lignes, 40 colonnes
     • 3 fichiers fusionnés (RESULT, PLV, COM)
     ↓
-🔧 SILVER (Cleaned & Validated)
+ SILVER (Cleaned & Validated)
     • 12.5M lignes, 55 colonnes
     • Jointures, déduplication, enrichissement
-    • ✅ GX Validation : 9/9 attentes OK
+    • GX Validation : 9/9 attentes OK
     ↓
-⭐ GOLD (Business Metrics)
+ GOLD (Business Metrics)
     • 5 fichiers d'agrégation
     • KPIs globaux, départements, communes
     • Analyse paramètres critiques
-    ↓
-📊 Visualisation / BI (Power BI, Looker, etc.)
 ```
 
 ---
 
-## 📊 Résultats Clés
+## Résultats Clés
 
 | Métrique | Valeur |
 |----------|--------|
@@ -51,9 +49,9 @@ Projet complet de **Data Engineering** implémentant une **architecture Médaill
 | **Prélèvements uniques** | 295K |
 | **Couverture géographique** | 103 départements, 30K communes |
 | **Paramètres analysés** | 1,366 uniques |
-| **Validation Great Expectations** | ✅ 9/9 attentes OK |
+| **Validation Great Expectations** | 9/9 attentes OK |
 
-### 🥇 Résultats Métier
+### Résultats Métier
 
 - **Meilleure commune** : JONCREUIL (pollution moyenne: 0.004)
 - **Pire commune** : CROUZILLES (pollution moyenne: 210.618)
@@ -61,7 +59,7 @@ Projet complet de **Data Engineering** implémentant une **architecture Médaill
 
 ---
 
-## 📁 Structure du Projet
+##  Structure du Projet
 
 ```
 eau-project/
@@ -71,18 +69,18 @@ eau-project/
 ├── .gitignore                  # Fichiers à ignorer Git
 ├── .env.example                # Template variables d'environnement
 │
-├── 📂 src/eau/                 # 🎯 CODE MÉTIER (réutilisable)
+├── 📂 src/eau/                 # CODE MÉTIER (réutilisable)
 │   ├── __init__.py
 │   ├── bronze.py               # Logique Bronze
 │   ├── silver.py               # Logique Silver
 │   └── gold.py                 # Logique Gold
 │
-├── 📂 notebooks/               # 🔬 ANALYSES & EXPLORATIONS
+├── 📂 notebooks/               # ANALYSES & EXPLORATIONS
 │   ├── 01_ingestion_bronze.py      # Pipeline d'ingestion
 │   ├── 02_transformation_silver.py # Pipeline de nettoyage/validation
 │   └── 03_aggregation_gold.py      # Pipeline d'agrégation
 │
-├── 📂 scripts/                 # 🛠️ OUTILS DE DÉVELOPPEMENT
+├── 📂 scripts/                 # OUTILS DE DÉVELOPPEMENT
 │   ├── README.md               # Documentation des scripts
 │   ├── check_gold_output.py    # Diagnostic fichiers Gold
 │   ├── check_silver.py         # Diagnostic couche Silver
@@ -90,16 +88,16 @@ eau-project/
 │   ├── quick_check_silver.py   # Diagnostic rapide Silver
 │   └── analyze_zip.py          # Analyse structure ZIP
 │
-├── 📂 tests/                   # ✅ TESTS UNITAIRES
+├── 📂 tests/                   # TESTS UNITAIRES
 │   ├── __init__.py
 │   ├── test_setup.py
 │   └── test_columns.py
 │
-├── 📂 data/                    # 📊 DONNÉES
+├── 📂 data/                    # DONNÉES
 │   ├── bronze/
-│   │   └── bronze_combined.csv          (2.1 GB)
+│   │   └── bronze_combined.csv   
 │   ├── clean/
-│   │   └── silver_clean.csv             (6.8 GB)
+│   │   └── silver_clean.csv      
 │   └── gold/
 │       ├── gold_global_kpis.csv
 │       ├── gold_departments_pollution.csv
@@ -107,19 +105,13 @@ eau-project/
 │       ├── gold_communes_top10_worst.csv
 │       └── gold_critical_parameters.csv
 │
-├── 📂 docs/                    # 📚 DOCUMENTATION
-│   └── ...
-│
-├── 📂 config/                  # ⚙️ CONFIGURATION
-│   └── ...
-│
-└── 📂 gx/                      # 🔍 GREAT EXPECTATIONS
+└── 📂 gx/                      # GREAT EXPECTATIONS
     └── (contexte éphémère)
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prérequis
 
@@ -166,15 +158,15 @@ python scripts/check_silver.py
 
 ---
 
-## 🔍 Détails Techniques
+##  Détails Techniques
 
 ### Pipeline Bronze (`01_ingestion_bronze.py`)
 
-- 📥 Télécharge le ZIP depuis data.gouv.fr (276 MB)
-- 📂 Extrait 3 fichiers TXT (RESULT, PLV, COM)
-- 🔄 Applique mappages de colonnes spécifiques
-- 📊 Fusionne via jointures externes
-- 💾 Exporte en CSV UTF-8
+- Télécharge le ZIP depuis data.gouv.fr (276 MB)
+- Extrait 3 fichiers TXT (RESULT, PLV, COM)
+- Applique mappages de colonnes spécifiques
+- Fusionne via jointures externes
+- Exporte en CSV UTF-8
 
 **Sortie :** 13M lignes × 40 colonnes
 
@@ -187,7 +179,7 @@ python scripts/check_silver.py
 4. **Validation** : Great Expectations v0.18+ (9 attentes)
 5. **Enrichissement** : record_id, quality_flag
 
-**Validation GX :** 9/9 attentes OK ✅
+**Validation GX :** 9/9 attentes OK
 
 **Validation personnalisée :**
 - resultat NULL : 0.86% (normal - params qualitatifs)
@@ -215,7 +207,7 @@ python scripts/check_silver.py
 
 ---
 
-## ✅ Qualité & Validation
+## Qualité & Validation
 
 ### Great Expectations v0.18+
 
@@ -224,80 +216,10 @@ La pipeline utilise **Great Expectations** avec :
 - **Fluent API** pour définition des attentes
 - **ValidationDefinition** pour exécution
 
-**Attentes (9 au total) :**
+**Attentes :**
 - Table non-vide
 - Colonnes requises présentes
 - Types de données corrects
-- Valeurs non-NULL (où attendu)
+- Valeurs non-NULL
 - Valeurs dans plages acceptables
 
-### Problèmes Connus & À Investiguer
-
-| Problème | Sévérité | Statut | Note |
-|----------|----------|--------|------|
-| pH hors plage [4.0, 11.0] | ⚠️ Moyen | À investiguer | 847K anomalies — possible unité de mesure |
-| Dates : NaT en résumé | 🔵 Info | À résoudre | Suffixes de fusion non nettoyés |
-| Nitrates > 500 mg/L | 🟡 Faible | Accepté | 2.8K cas — <0.03% du total |
-
----
-
-## 🌐 Déploiement Azure Databricks
-
-```python
-# spark-submit à partir de Azure Databricks
-spark-submit --packages org.apache.hadoop:hadoop-azure:3.2.0 \
-    dbfs:/notebooks/02_transformation_silver.py
-```
-
-**Configuration requise :**
-- Storage Account pour fichiers (Bronze, Silver, Gold)
-- Cluster Databricks (7.3 LTS ou plus récent)
-- Great Expectations SDK installé
-
----
-
-## 📝 Logs & Monitoring
-
-Tous les pipelines produisent des logs structurés :
-
-```
-2026-05-06 09:21:44 - INFO - 🔄 PIPELINE SILVER — TRANSFORMATION + VALIDATION GX
-2026-05-06 09:21:44 - INFO - 📂 Chargement des données : ./data/clean/silver_clean.csv
-...
-2026-05-06 09:25:40 - INFO - ✅ Résultat global : SUCCÈS
-```
-
----
-
-## 🔗 Ressources
-
-- **Data Source :** [data.gouv.fr — Qualité de l'eau](https://www.data.gouv.fr/)
-- **Great Expectations :** [Documentation](https://docs.greatexpectations.io/)
-- **Medallion Architecture :** [Databricks Blog](https://www.databricks.com/blog/)
-- **Azure Data Engineering :** [Microsoft Docs](https://learn.microsoft.com/fr-fr/azure/architecture/reference-architectures/data-engineering/)
-
----
-
-## 👨‍💼 Contribution & Support
-
-- **Issues :** Signaler un bug ou proposer une amélioration
-- **Discussions :** Questions techniques (Discussions GitHub)
-- **Pull Requests :** Contributions bienvenues !
-
----
-
-## 📄 Licence
-
-MIT License — Libre d'utilisation
-
----
-
-## 📧 Contact
-
-**Auteur :** eau-project  
-**Email :** contact@eau-project.local  
-**Dernière mise à jour :** Mai 2026
-
----
-
-**Statut :** ✅ **PRODUCTION-READY**
