@@ -118,7 +118,6 @@ Ce projet intègre un pipeline de validation automatique via GitHub Actions :
 
 Le workflow se déclenche automatiquement à chaque push ou pull_request sur la branche main.
 
-Voir les exécutions : https://github.com/DBX-76/projet-eau-david/actions
 ---
 
 ## Quick Start
