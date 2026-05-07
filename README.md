@@ -60,15 +60,9 @@ Projet implémentant une **architecture Médaillon** (Bronze → Silver → Gold
 
 ```
 eau-project/
-├── README.md                    
-├── requirements.txt            
-├── .gitignore                  
-│
-├── 📂 src/eau/                
-│   ├── __init__.py
-│   ├── bronze.py               # Logique Bronze
-│   ├── silver.py               # Logique Silver
-│   └── gold.py                 # Logique Gold
+├── README.md
+├── requirements.txt
+├── .gitignore
 │
 ├── 📂 notebooks/
 │   ├── local_pipeline/             # Notebooks d'exploration/développement
