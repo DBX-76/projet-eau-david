@@ -1,4 +1,4 @@
-# 📋 Spécification des Règles de Qualité - Projet Eau
+# Spécification des Règles de Qualité - Projet Eau
 
 ## Vue d'ensemble
 Ce document détaille toutes les règles de validation et de qualité des données qui seront implémentées via **Great Expectations** dans la couche Silver (données nettoyées) du pipeline Data Engineering.
@@ -311,17 +311,6 @@ Ce document détaille toutes les règles de validation et de qualité des donné
   )
   ```
 
-### 6.2 Pas de doublons dans la même commune/jour
-- **Règle :** Max 5 mesures par commune/jour/paramètre (sauf stations multiples)
-- **Justification :** Identifier les imports massifs anormaux
-- **Type d'erreur :** Erreur d'intégration massive
-- **Action en cas d'anomalie :** Marquer et enquêter
-- **Code Great Expectations :**
-  ```python
-  # À implémenter en PySpark
-  # df.groupBy("commune_code", "date_prelevement", "parametre").count().filter(col("count") > 5)
-  ```
-
 ---
 
 ## 7. Règles d'Unité de Mesure
@@ -406,43 +395,3 @@ Ce document détaille toutes les règles de validation et de qualité des donné
 | **BASSE** | Métadonnée manquante | **LOG** + Continuation | Source inconnue |
 
 ---
-
-## 10. Intégration au Pipeline PySpark
-
-### Structure de validation (pseudo-code)
-```python
-from great_expectations.dataset import PandasDataset
-import pandas as pd
-
-df = pd.read_csv("bronze_data.csv")
-batch = PandasDataset(df)
-
-# Lancer l'ensemble des validations
-validations = batch.validate()
-
-# Traiter les résultats
-if validations["success"]:
-    print("✅ Données validées ! Passage à Silver.")
-else:
-    print("❌ Erreurs trouvées :")
-    for error in validations["results"]:
-        print(f"  - {error['expectation_config']['expectation_type']}: {error['result']}")
-    
-    # Optionnel : générer un rapport HTML
-    batch.get_validation_report().save_html("validation_report.html")
-```
-
----
-
-## 11. Prochaines Étapes
-
-1. **Implementation :** Créer un fichier Python `tests/validation_rules.py` avec chaque règle en Great Expectations
-2. **Testing :** Exécuter les validations sur un échantillon de données en local
-3. **Déploiement :** Intégrer dans le Notebook Silver de Databricks
-4. **Monitoring :** Générer des rapports quotidiens de validation
-5. **Évolution :** Ajouter/modifier des règles selon les retours métier
-
----
-
-*Dernière mise à jour : Mai 2026*
-*Responsable : [À compléter]*
