@@ -98,11 +98,11 @@ print("  OK\n")
 # Test 5 : Import des modules locaux
 print("✓ Test 5 : Modules locaux")
 try:
-    sys.path.insert(0, 'notebooks')
+    sys.path.insert(0, 'notebooks/local_pipeline')
     # On va juste vérifier la syntaxe
     import ast
     for notebook in ['01_ingestion_bronze.py', '02_transformation_silver.py', '03_aggregation_gold.py']:
-        with open(f'notebooks/{notebook}', 'r', encoding='utf-8') as f:
+        with open(f'notebooks/local_pipeline/{notebook}', 'r', encoding='utf-8') as f:
             try:
                 ast.parse(f.read())
                 print(f"  {notebook} : Syntaxe OK")
