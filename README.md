@@ -70,11 +70,13 @@ eau-project/
 │   ├── silver.py               # Logique Silver
 │   └── gold.py                 # Logique Gold
 │
-├── 📂 notebooks/               
-│   ├── 01_ingestion_bronze.py      # Pipeline d'ingestion
-│   ├── 02_transformation_silver.py # Pipeline de nettoyage/validation
-│   └── 03_aggregation_gold.py      # Pipeline d'agrégation
-│   └── notebook_databricks_eau     # Notebook commité de la plateforme Databricks
+├── 📂 notebooks/
+│   ├── local_pipeline/             # Notebooks d'exploration/développement
+│   │   ├── 01_ingestion_bronze.py      # Pipeline d'ingestion
+│   │   ├── 02_transformation_silver.py # Pipeline de nettoyage/validation
+│   │   ├── 03_aggregation_gold.py      # Pipeline d'agrégation
+│   │   └── notebook_databricks_eau     # Notebook commité de la plateforme Databricks
+│   └── databricks_pipeline/        # Notebooks de production Databricks (vide)
 │
 ├── 📂 scripts/                 
 │   ├── README.md               # Documentation des scripts
@@ -146,13 +148,13 @@ pip install -e ".[dev]"
 
 ```bash
 # Bronze - Ingestion des données
-python notebooks/01_ingestion_bronze.py
+python notebooks/local_pipeline/01_ingestion_bronze.py
 
 # Silver - Nettoyage & validation
-python notebooks/02_transformation_silver.py
+python notebooks/local_pipeline/02_transformation_silver.py
 
 # Gold - Agrégations métier
-python notebooks/03_aggregation_gold.py
+python notebooks/local_pipeline/03_aggregation_gold.py
 ```
 
 ### Diagnostic
@@ -169,7 +171,7 @@ python scripts/check_silver.py
 
 ##  Détails Techniques
 
-### Pipeline Bronze (`01_ingestion_bronze.py`)
+### Pipeline Bronze (`notebooks/local_pipeline/01_ingestion_bronze.py`)
 
 - Télécharge le ZIP depuis data.gouv.fr (276 MB)
 - Extrait 3 fichiers TXT (RESULT, PLV, COM)
@@ -179,7 +181,7 @@ python scripts/check_silver.py
 
 **Sortie :** 13M lignes × 40 colonnes
 
-### Pipeline Silver (`02_transformation_silver.py`)
+### Pipeline Silver (`notebooks/local_pipeline/02_transformation_silver.py`)
 
 **Étapes :**
 1. **Reconstruction** : Jointures PLV (96.9% enrichissement communes)
@@ -198,7 +200,7 @@ python scripts/check_silver.py
 
 **Sortie :** 12.5M lignes × 55 colonnes (6.8 GB)
 
-### Pipeline Gold (`03_aggregation_gold.py`)
+### Pipeline Gold (`notebooks/local_pipeline/03_aggregation_gold.py`)
 
 **Fichiers générés :**
 
@@ -248,5 +250,25 @@ Les fichiers CSV de la couche Gold (générés localement) ont été importés d
 - Seuls les fichiers Gold finaux ont été utilisés
 - Aucune transformation supplémentaire n'a été appliquée
 
-voir le répertoire notebook/notebook_databricks_eau
+voir le répertoire notebooks/local_pipeline/notebook_databricks_eau
+
+---
+
+## Exposition API
+
+Une interface REST légère a été mise en place pour exposer les résultats de la couche Gold sans dépendre directement de l'environnement Databricks. Elle s'appuie sur le fichier `api_exposition.json` généré automatiquement par le pipeline.
+
+### Points d'accès
+- `GET /api/health` : Vérification de l'état du service
+- `GET /api/kpis` : Indicateurs clés (conformité, volume, couverture géographique)
+- `GET /api/departments` : Top des départements par score de pollution
+- `GET /api/parameters` : Statistiques des paramètres critiques
+
+### Utilisation locale
+Le serveur peut être démarré avec les commandes suivantes :
+```bash
+pip install fastapi uvicorn
+python api_server.py
+```
+L'API est ensuite accessible à l'adresse `http://localhost:8000`. La documentation interactive (Swagger UI) est disponible sur `http://localhost:8000/docs`.
 
