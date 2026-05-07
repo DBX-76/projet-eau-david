@@ -221,7 +221,7 @@ def validate_with_great_expectations(df: pd.DataFrame) -> dict:
     Returns:
         dict : {'success': bool, 'statistics': dict, 'results': list, 'skipped': bool}
     """
-        logger.info("\nVALIDATION GREAT EXPECTATIONS (v0.18+)")
+    logger.info("\nVALIDATION GREAT EXPECTATIONS (v0.18+)")
 
     if not GX_AVAILABLE:
         logger.warning("  Great Expectations non installé — validation ignorée")

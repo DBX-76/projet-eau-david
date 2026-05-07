@@ -25,14 +25,21 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # 2025 : Fichier ZIP 276 Mo - Résultats contrôle sanitaire eau
-DATA_SOURCES = {Oh je veux pas que je pouvais faire ça
+DATA_SOURCES = {
     "qualite_eau_2025": "https://www.data.gouv.fr/fr/datasets/r/7e38c236-dd3c-455e-a728-f0ecb84b1a7c"
-   
+
 }
 
-# Dossier de sortie 
+# Dossier de sortie
 BRONZE_PATH = "./data/bronze"
 os.makedirs(BRONZE_PATH, exist_ok=True)
+
+# Paramètres de téléchargement
+TIMEOUT = 300  # Délai d'attente maximal pour les requêtes HTTP (en secondes, soit 5 minutes)
+ENCODING = 'iso-8859-1'  # Encodage des fichiers texte (ISO-8859-1 pour supporter les caractères accentués français)
+SEPARATOR_CSV = ','  # Séparateur de colonnes standard dans les fichiers CSV
+SEPARATOR_FR = ';'  # Séparateur français pour l'export des données (point-virgule au lieu de virgule)
+SEPARATOR = SEPARATOR_CSV  # Séparateur par défaut pour les lectures CSV
 
 # Paramètres de téléchargement
 TIMEOUT = 300  # 5 min 
