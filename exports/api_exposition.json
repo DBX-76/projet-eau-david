@@ -1,4 +1,9 @@
 {
+  "metadata": {
+    "generated_at": "2026-05-07T09:07:54.914233",
+    "source": "Pipeline Qualite Eau - Gold Layer",
+    "note": "Visualisations basees sur colonnes disponibles: avg_result, alerts, mean"
+  },
   "kpis": [
     {
       "total_records": 12512381,
@@ -13,52 +18,70 @@
       "quality_ok": 12403010,
       "quality_warning": 1616,
       "quality_alert": 0,
-      "quality_unknown": 107755
+      "quality_unknown": 107755,
+      "updated_at": "2026-05-07T09:06:49.139918"
     }
   ],
-  "top_departments_polluted": [
+  "departments_top_avg": [
     {
-      "code_departement": "1",
-      "samplings": 3613,
-      "avg_result": 11.167,
-      "pollution_score": 0.0
+      "code_departement": "59",
+      "avg_result": 27.139,
+      "alerts": 0.0
     },
     {
-      "code_departement": "67",
-      "samplings": 3954,
-      "avg_result": 14.385,
-      "pollution_score": 0.0
+      "code_departement": "94",
+      "avg_result": 22.703,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "62",
+      "avg_result": 21.859,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "93",
+      "avg_result": 21.399,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "2",
+      "avg_result": 21.352,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "80",
+      "avg_result": 20.387,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "976",
+      "avg_result": 19.769,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "91",
+      "avg_result": 19.332,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "52",
+      "avg_result": 19.296,
+      "alerts": 0.0
+    },
+    {
+      "code_departement": "57",
+      "avg_result": 18.965,
+      "alerts": 0.0
     }
   ],
-  "critical_parameters_summary": [
+  "critical_parameters_stats": [
     {
       "parameter": "pH",
       "count": 273307,
       "mean": 7.555,
-      "median": 7.5,
-      "std": 0.456,
       "min": 0.0,
       "max": 13.7,
-      "threshold": null,
-      "exceedances": 0,
-      "percent_exceeding": 0.0
-    },
-    {
-      "parameter": "Nitrates",
-      "count": 50000,
-      "mean": 25.3,
-      "median": 20.0,
-      "std": 15.2,
-      "min": 0.0,
-      "max": 150.0,
-      "threshold": 50.0,
-      "exceedances": 2800,
-      "percent_exceeding": 5.6
+      "threshold": null
     }
-  ],
-  "metadata": {
-    "generated_at": "2026-05-07T13:58:04+02:00",
-    "source": "Databricks Gold Layer",
-    "version": "1.0"
-  }
+  ]
 }
