@@ -264,11 +264,27 @@ Une interface REST légère a été mise en place pour exposer les résultats de
 - `GET /api/departments` : Top des départements par score de pollution
 - `GET /api/parameters` : Statistiques des paramètres critiques
 
+### Configuration locale
+Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+```bash
+DATABRICKS_HOST=<votre_host_databricks>
+DATABRICKS_TOKEN=<votre_token_acces>
+DATABRICKS_JOB_ID=<votre_job_id>
+```
+Ce fichier est exclu du versionnement Git pour des raisons de sécurité.
+
 ### Utilisation locale
 Le serveur peut être démarré avec les commandes suivantes :
 ```bash
-pip install fastapi uvicorn
+pip install fastapi uvicorn python-dotenv
 python api_server.py
 ```
 L'API est ensuite accessible à l'adresse `http://localhost:8000`. La documentation interactive (Swagger UI) est disponible sur `http://localhost:8000/docs`.
+
+### Déclenchement du pipeline Databricks
+Un script permet de déclencher le workflow Databricks à distance :
+```bash
+python scripts/trigger_pipeline.py
+```
+Ce script utilise automatiquement les variables définies dans `.env`.
 

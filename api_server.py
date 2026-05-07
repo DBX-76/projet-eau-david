@@ -2,6 +2,10 @@
 from fastapi import FastAPI, HTTPException
 import json
 import os
+from dotenv import load_dotenv
+
+# Charge les variables depuis le fichier .env s'il existe
+load_dotenv()
 
 app = FastAPI(title="Pipeline Qualite Eau - API Exposition", version="1.0")
 
