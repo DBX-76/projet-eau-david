@@ -64,30 +64,15 @@ Cette contrainte a renforcé la compréhension des principes d'architecture déc
 
 #### Orchestration Databricks Job
 
-| Paramètre | Valeur | Description |
-|-----------|--------|-------------|
-| Job Name | `Pipeline_Eau_Gold` | Nom affiché dans l'interface Workflows |
-| Task 1 | Notebook `01_gold_delta_tables` | Aucune dépendance, exécutée en premier |
-| Task 2 | Notebook `02_quality_validation` | Dépendance : Task 1 (démarre uniquement après succès) |
-| Task 3 | Notebook `03_visualisation_export` | Dépendance : Task 2 (valide les données avant export) |
-| Cluster | Shared CPU (Community) | Ressources allouées par Databricks Free |
-| Trigger | Manuel (via UI ou API) | Déclenchement via `scripts/trigger_pipeline.py` |
+L'exécution séquentielle des trois notebooks est pilotée via l'interface **Workflows > Jobs** de Databricks, nativement disponible sur la version Community Edition. Le pipeline est configuré avec des dépendances strictes entre les tâches :
 
-> **Note — Databricks Community Edition** : l'interface Workflows ne propose pas de DAG visuel ni de scheduling avancé. L'orchestration est implémentée via un notebook maître (`00_Pipeline_Master`) utilisant `%run` séquentiel, ce qui reproduit le comportement des dépendances strictes : si un notebook échoue, l'exécution s'arrête.
+| Tâche | Notebook | Dépendance |
+|-------|----------|------------|
+| `1` | `01_gold_delta_tables` | Aucune (exécution initiale) |
+| `2` | `02_quality_validation` | Succès de la tâche 1 |
+| `3` | `03_visualisation_export` | Succès de la tâche 2 |
 
-```python
-# 00_Pipeline_Master.py
-print("=== ÉTAPE 1 : Création tables Gold ===")
-%run ./01_gold_delta_tables
-
-print("=== ÉTAPE 2 : Validation Great Expectations ===")
-%run ./02_quality_validation
-
-print("=== ÉTAPE 3 : Visualisation & Export ===")
-%run ./03_visualisation_export
-
-print("=== PIPELINE TERMINÉ ===")
-```
+Cette configuration garantit un flux linéaire et interrompt automatiquement l'exécution en cas d'échec, évitant ainsi la propagation de données non validées. Le déclenchement s'effectue manuellement depuis l'interface Databricks ou de manière programmatique via l'API REST (`scripts/trigger_pipeline.py`). 
 
 #### API FastAPI
 
@@ -115,12 +100,12 @@ L'énoncé du projet proposait l'utilisation du **Data Load Tool (DLT)** pour au
 
 | Critère | Analyse | Décision |
 |---------|---------|----------|
-| Contexte Azure | Le Data Load Tool prend tout son sens dans un écosystème Azure complet (Data Factory, Key Vault, Managed Identity). | Sans accès Azure immédiat, l'outil perdait une partie de sa pertinence opérationnelle. |
+| Contexte Azure | Le Data Load Tool prend tout son sens dans un écosystème Azure complet | Sans accès Azure immédiat, l'outil perdait une partie de sa pertinence opérationnelle. |
 | Phase d'exploration | Besoin de prototypage rapide et de compréhension des données brutes en début de projet. | `requests` + `pandas` permet une itération immédiate, un débogage facile et un contrôle total du flux. |
 | Capacité locale | La machine de développement disposait de ressources suffisantes pour traiter la volumétrie (~2 Go compressés). | Pas de nécessité de déporter l'ingestion vers un outil cloud. |
 | Maîtrise préalable | Connaissance solide de `requests` et des patterns d'ingestion HTTP/CSV. | Réduction du risque technique et accélération du développement. |
 
-Ce choix ne remet pas en cause la pertinence du Data Load Tool. Dans un contexte Azure complet ou pour un projet en production avec des contraintes de sécurité renforcées (authentification managée, audit, retry policies), cet outil serait naturellement privilégié. La structure modulaire du code (`src/eau/bronze.py`) permettrait d'ailleurs de remplacer la logique `requests` par un appel au Data Load Tool avec un effort de refactorisation minimal.
+Ce choix ne remet pas en cause la pertinence du Data Load Tool. Dans un contexte Azure complet, cet outil serait naturellement privilégié. 
 
 #### Traitement des données : Pandas (local) vs PySpark (Databricks)
 
@@ -184,7 +169,7 @@ Les deux premiers jours ont été marqués par l'exploration technique et l'ince
 
 ### 4.4 Expérience Azure antérieure
 
-Lors d'un projet précédent en machine learning, l'utilisation d'Azure (Form Recognizer, Document Intelligence, Azure ML) a été une expérience formatrice. Bien que la courbe d'apprentissage initiale soit raide, la puissance et l'intégration des services Azure se révèlent particulièrement efficaces une fois les concepts maîtrisés. Cette expérience renforce la motivation à déployer ce projet Qualité d'Eau sur Azure dans une future itération, pour en exploiter tout le potentiel cloud.
+Lors d'un projet précédent en machine learning, l'utilisation d'Azure AI Foundry a été une expérience formatrice. Bien que la courbe d'apprentissage initiale soit raide, la puissance et l'intégration des services Azure se révèlent particulièrement efficaces une fois les concepts maîtrisés. Cette expérience renforce la motivation à déployer les projets futurs sur Azure dans pour en exploiter tout le potentiel cloud.
 
 ---
 
