@@ -30,6 +30,10 @@ black>=23.0.0
 pylint>=2.17.0
 flake8>=6.1.0
 
+# API (optional, for data exposition)
+fastapi>=0.100.0
+uvicorn>=0.20.0
+
 # Jupyter (optional, for notebook development)
 jupyter>=1.0.0
 ipython>=8.12.0
