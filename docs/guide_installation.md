@@ -1,6 +1,6 @@
-# 🚀 Guide d'Installation - Pipeline Eau
+# Guide d'Installation - Pipeline Eau
 
-## ⚡ Démarrage Ultra-Rapide (5 minutes)
+## Démarrage Ultra-Rapide (5 minutes)
 
 ### 1. Cloner le Dépôt
 ```bash
@@ -28,16 +28,16 @@ pip install -r requirements.txt
 ### 4. Tester Localement
 ```bash
 # Télécharger un petit échantillon de données
-python notebooks/01_ingestion_bronze.py
+python notebooks/local_pipeline/01_ingestion_bronze.py
 
 # Si succès, continuez :
-python notebooks/02_transformation_silver.py
-python notebooks/03_aggregation_gold.py
+python notebooks/local_pipeline/02_transformation_silver.py
+python notebooks/local_pipeline/03_aggregation_gold.py
 ```
 
 ---
 
-## 📋 Installation Détaillée
+## Installation Détaillée
 
 ### Prérequis
 - **Python :** 3.9+ (vérifiez avec `python --version`)
@@ -45,7 +45,7 @@ python notebooks/03_aggregation_gold.py
 - **Git :** Pour cloner le dépôt
 - **RAM :** Au minimum 4 GB (8 GB recommandé)
 
-### Étape 1️⃣ : Cloner le Dépôt
+### Étape 1 : Cloner le Dépôt
 
 ```bash
 # HTTPS (sans SSH)
@@ -57,7 +57,7 @@ git clone git@github.com:<votre-nom>/eau-project.git
 cd eau-project
 ```
 
-### Étape 2️⃣ : Créer et Activer l'Environnement Virtuel
+### Étape 2 : Créer et Activer l'Environnement Virtuel
 
 **IMPORTANT :** L'environnement virtuel isole votre projet des autres packages Python.
 
@@ -74,14 +74,27 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-### Étape 3️⃣ : Installer les Dépendances
+### Étape 3 : Installer les Dépendances
 
-```bash
 # Mettre à jour pip (important !)
 pip install --upgrade pip setuptools wheel
 
 # Installer les packages
 pip install -r requirements.txt
+```
+
+Cela installe :
+- `pandas` : Manipulation de données
+- `numpy` : Calcul numérique
+- `pyspark` : Traitement distribué
+- `great-expectations` : Validation qualité
+- `requests` : Téléchargement HTTP
+- `pytest` : Tests unitaires
+
+### Étape 4 : Vérifier l'Installation
+
+```bash
+python -c "import pandas, pyspark, great_expectations; print('Tous les packages sont installes')"
 ```
 
 Cela installe :
@@ -100,7 +113,7 @@ python -c "import pandas, pyspark, great_expectations; print('✅ Tous les packa
 
 ---
 
-## 🔧 Configuration Locale
+## Configuration Locale
 
 ### Créer le Fichier .env
 
@@ -122,25 +135,25 @@ ls -la docs/
 
 ---
 
-## ▶️ Lancer le Pipeline Local
+## Lancer le Pipeline Local
 
 ### Test Complet (toutes les étapes)
 
 ```bash
 # 1. Ingestion (Bronze)
-python notebooks/01_ingestion_bronze.py
+python notebooks/local_pipeline/01_ingestion_bronze.py
 
 # Vérifiez : un fichier bronze_combined.csv devrait apparaître dans ./data/bronze/
 
 # 2. Transformation (Silver)
-python notebooks/02_transformation_silver.py
+python notebooks/local_pipeline/02_transformation_silver.py
 
 # Vérifiez : un fichier silver_clean.csv devrait apparaître dans ./data/clean/
 
 # 3. Agrégation (Gold)
-python notebooks/03_aggregation_gold.py
+python notebooks/local_pipeline/03_aggregation_gold.py
 
-# Vérifiez : les fichiers Gold devraient apparaître dans ./data/aggregates/
+# Vérifiez : les fichiers Gold devraient apparaître dans ./data/gold/
 ```
 
 ### Lancer les Tests
@@ -149,16 +162,13 @@ python notebooks/03_aggregation_gold.py
 # Exécuter tous les tests
 pytest tests/ -v
 
-# Exécuter un test spécifique
-pytest tests/test_quality_rules.py -v
-
 # Avec couverture de code
-pytest tests/ --cov=notebooks --cov-report=html
+pytest tests/ --cov=. --cov-report=html
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 | Problème | Cause | Solution |
 |----------|-------|----------|
@@ -170,7 +180,7 @@ pytest tests/ --cov=notebooks --cov-report=html
 
 ---
 
-## 📦 Dépendances Principales
+## Dépendances Principales
 
 ### Core
 - **pandas** : Manipulation de données tabulaires
@@ -189,12 +199,12 @@ pytest tests/ --cov=notebooks --cov-report=html
 
 ---
 
-## 🌐 Déploiement sur Azure Databricks
+## Déploiement sur Azure Databricks
 
 ### Prérequis
-- ✅ Accès Azure (Resource Group, Databricks Workspace)
-- ✅ Token Databricks généré
-- ✅ Stockage Azure (Data Lake Storage)
+- Accès Azure (Resource Group, Databricks Workspace)
+- Token Databricks généré
+- Stockage Azure (Data Lake Storage)
 
 ### Configuration
 
@@ -216,26 +226,17 @@ databricks jobs create --json-file config/databricks_job_config.json
 
 ---
 
-## ✅ Checklist de Démarrage
+## Checklist de Démarrage
 
 - [ ] Python 3.9+ installé
 - [ ] Dépôt Git cloné
 - [ ] Environnement virtuel créé et activé
 - [ ] `pip install -r requirements.txt` exécuté sans erreurs
-- [ ] `python notebooks/01_ingestion_bronze.py` fonctionne
+- [ ] `python notebooks/local_pipeline/01_ingestion_bronze.py` fonctionne
 - [ ] Fichiers CSV générés dans `/data/`
 - [ ] Les tests passent : `pytest tests/ -v`
 - [ ] Fichier `.env` rempli avec les paramètres Azure
 
 ---
 
-## 📞 Support & Questions
-
-- 📖 Consultez le [README.md](../README.md) pour une vue d'ensemble
-- 📋 Consultez [docs/regles_qualite.md](../docs/regles_qualite.md) pour les règles de validation
-- 🐛 Ouvrez une issue sur GitHub
-- 💬 Contactez votre formateur ou binôme
-
----
-
-**Bonne chance ! 🚀 Vous êtes maintenant prêt à explorer les données !**
+Consultez [docs/regles_qualite.md](../docs/regles_qualite.md) pour les règles de validation.
