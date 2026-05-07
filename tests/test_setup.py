@@ -74,9 +74,9 @@ required_files = {
     'README.md': 'Vue d\'ensemble',
     'requirements.txt': 'Dépendances',
     '.gitignore': 'Exclusions Git',
-    'notebooks/01_ingestion_bronze.py': 'Ingestion',
-    'notebooks/02_transformation_silver.py': 'Transformation',
-    'notebooks/03_aggregation_gold.py': 'Agrégation',
+    'notebooks/local_pipeline/01_ingestion_bronze.py': 'Ingestion',
+    'notebooks/local_pipeline/02_transformation_silver.py': 'Transformation',
+    'notebooks/local_pipeline/03_aggregation_gold.py': 'Agrégation',
     'docs/regles_qualite.md': 'Règles de validation',
     'docs/MIGRATION_URL_2025.md': 'Configuration URL',
 }
